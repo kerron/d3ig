@@ -1,7 +1,5 @@
  <p align="center">
-
-![d3ig](./d3ig.png#center)
-
+<img src="./d3ig.png" width="200">
  </p>
 
  <p align="center">
