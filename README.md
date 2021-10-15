@@ -1,2 +1,11 @@
-# d3ig
-data visualisation tool for github
+ <p align="center">
+
+![d3ig](./d3ig.png#center)
+
+ </p>
+
+ <p align="center">
+Data visualisation tool for github
+</p>
+
+---
