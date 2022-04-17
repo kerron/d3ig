@@ -1,35 +1,52 @@
-import { applySnapshot, flow, Instance, types } from "mobx-state-tree";
+import { flow, Instance, types } from "mobx-state-tree";
 import { getOctoAuth } from "../../../services/network/api/auth";
 import { Octokit } from "@octokit/core";
 import { USER_REPO } from "../../../constants/storage";
 
 const AuthStore = types
   .model("AuthStore", {
-    hasInstance: types.optional(types.boolean, false),
+    hasInstance: false,
     repoCount: types.optional(types.number, 0),
   })
   .volatile((self) => ({
     authInstance: {} as Octokit,
+    graphqlWithAuth: {} as Octokit["graphql"],
   }))
   .actions((self) => ({
     getAuth() {
       if (self.hasInstance) {
-        console.log("returning instance");
         return self.authInstance;
       }
-
       try {
-        const resp = getOctoAuth();
-        self.authInstance = resp;
+        const instance = getOctoAuth();
+        self.authInstance = instance;
+        self.graphqlWithAuth = instance.graphql.defaults({
+          headers: {
+            authorization: `token ${process.env.REACT_APP_PAT_AUTH}`,
+          },
+        });
         self.hasInstance = true;
       } catch (e) {
         console.log("store catch", e);
         self.hasInstance = false;
       }
     },
-    getOrg: flow(function* (org: string) {
+    getOrg: flow(function* () {
       try {
-        const resp = yield self.authInstance.request(`GET /orgs/${org}/repos`);
+        const resp = yield self.graphqlWithAuth(`
+          {
+              repository(owner: "esure-cloud", name: "fe-react-app-integrated-eclaim") {
+                pullRequests(last: 3) {
+                  edges {
+                    node {
+                      title
+                    }
+                  }
+                }
+              }
+            }
+        `);
+        // const resp = yield self.authInstance.request(`GET /orgs/${org}/repos`);
         console.log(resp);
       } catch (e) {
         console.error(e);

@@ -13,9 +13,7 @@ const App = observer(() => {
   useEffect(() => {
     // localStorage.removeItem(USER_REPO);
     if (!authStore.hasInstance) {
-      console.log("getting instance");
       authStore.getAuth();
-      console.log(localStorage.getItem(USER_REPO));
     }
   }, []);
 
@@ -30,7 +28,7 @@ const App = observer(() => {
           autoComplete="off"
           onChange={(e) => setSearch(e.target.value)}
         />
-        <Button onClick={() => authStore.getOrg("esure-cloud")}>Hello</Button>
+        <Button onClick={() => authStore.getOrg()}>Hello</Button>
       </Box>
       <Box>{authStore.getUserRepoCount()}</Box>
     </Container>
