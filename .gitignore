@@ -2,7 +2,6 @@
 dist/
 node_modules/
 out/
-.env
 
 # Logs
 logs
