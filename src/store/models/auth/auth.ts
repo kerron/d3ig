@@ -34,22 +34,52 @@ const AuthStore = types
     getOrg: flow(function* () {
       try {
         const resp = yield self.graphqlWithAuth(`
-          {
-              repository(owner: "esure-cloud", name: "fe-react-app-integrated-eclaim") {
-                pullRequests(last: 3) {
-                  edges {
-                    node {
-                      title
-                    }
-                  }
-                }
+        {
+          search(
+            last: 30
+            query: "repo:esure-cloud/fe-react-app-integrated-eclaim type:pr author:SanjeevE1996"
+            type: ISSUE
+          ) {
+            nodes {
+              ... on PullRequest {
+                state
+                url
               }
             }
+          }
+        }
         `);
         // const resp = yield self.authInstance.request(`GET /orgs/${org}/repos`);
         console.log(resp);
       } catch (e) {
         console.error(e);
+      }
+    }),
+    getClosedPRs: flow(function* () {
+      try {
+        const resp = yield self.graphqlWithAuth(`
+          {
+            repository(name: "fe-react-app-integrated-eclaim", owner: "esure-cloud") {
+              name
+              assignableUsers(first: 3) {
+                edges {
+                  node {
+                    name
+                    pullRequests(last: 1) {
+                      nodes {
+                        title
+                        mergedAt
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `);
+        console.log(resp);
+      } catch (e) {
+        console.log(e);
       }
     }),
     getUserRepos: flow(function* (val: string) {

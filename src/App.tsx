@@ -1,36 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
 import { useStore } from "./hooks/useStore";
-import { USER_REPO } from "./constants/storage";
 
 const App = observer(() => {
-  const [search, setSearch] = useState("");
   const { authStore } = useStore();
+  const { getAuth, getOrg, getClosedPRs } = authStore;
+
   useEffect(() => {
-    // localStorage.removeItem(USER_REPO);
     if (!authStore.hasInstance) {
-      authStore.getAuth();
+      getAuth();
     }
-  }, []);
+  }, [authStore, getAuth]);
 
   return (
     <Container>
       <Box component="form" noValidate autoComplete="off">
-        <TextField
-          id="outlined-basic"
-          hiddenLabel
-          placeholder="Search for user or org"
-          variant="standard"
-          autoComplete="off"
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <Button onClick={() => authStore.getOrg()}>Hello</Button>
+        <Button onClick={() => getOrg()} variant="contained">
+          getOrgs
+        </Button>
+        <Button onClick={() => getClosedPRs()} variant="contained">
+          get closed PRs
+        </Button>
       </Box>
-      <Box>{authStore.getUserRepoCount()}</Box>
     </Container>
   );
 });
