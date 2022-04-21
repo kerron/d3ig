@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import Container from "@mui/material/Container";
+import CircularProgress from "@mui/material/CircularProgress";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { useStore } from "./hooks/useStore";
@@ -31,7 +32,12 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
+const dynamicColors = function () {
+  var r = Math.floor(Math.random() * 255);
+  var g = Math.floor(Math.random() * 255);
+  var b = Math.floor(Math.random() * 255);
+  return "rgb(" + r + "," + g + "," + b + ")";
+};
 const options = {
   responsive: true,
   plugins: {
@@ -40,14 +46,27 @@ const options = {
     },
     title: {
       display: true,
-      text: "Chart.js Bar Chart",
+      text: "Lines of code commited since January",
     },
   },
 };
 
+const options2 = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: "bottom" as const,
+    },
+    title: {
+      display: true,
+      text: "date of PR (with # lines comitted) since January",
+    },
+  },
+};
 const App = observer(() => {
   const { authStore, octokitStore } = useStore();
   const {
+    isLoading,
     showLOCChart,
     showPRShart,
     locData,
@@ -55,7 +74,7 @@ const App = observer(() => {
     queryClosedPRs,
     queryLOC,
   } = octokitStore;
-  const { getAuth, getOrg } = authStore;
+  const { getAuth } = authStore;
 
   const data = {
     labels: locData.labels,
@@ -85,7 +104,10 @@ const App = observer(() => {
   };
   const data2 = {
     labels: prsData.labels,
-    datasets: [...prsData.datasets],
+    datasets: prsData.datasets.map((v) => {
+      const color = dynamicColors();
+      return { ...v, borderColor: color, backgroundColor: color };
+    }),
   };
 
   useEffect(() => {
@@ -96,19 +118,32 @@ const App = observer(() => {
 
   return (
     <Container>
-      <Box component="form" noValidate autoComplete="off">
-        <Button onClick={() => getOrg()} variant="contained">
-          getOrgs
-        </Button>
-        <Button onClick={() => queryClosedPRs()} variant="contained">
-          query closed PRs
+      <Box
+        component="form"
+        noValidate
+        autoComplete="off"
+        mb={8}
+        display="flex"
+        justifyContent="center"
+      >
+        <Button
+          sx={{ marginRight: 6 }}
+          onClick={() => queryClosedPRs()}
+          variant="contained"
+        >
+          query PRs Closed
         </Button>
         <Button onClick={() => queryLOC()} variant="contained">
           query lines of code
         </Button>
       </Box>
+      {isLoading && (
+        <Box sx={{ display: "flex" }}>
+          <CircularProgress />
+        </Box>
+      )}
+      {showPRShart && <Line options={options2} data={data2} />}
       {showLOCChart && <PolarArea options={options} data={data} />}
-      {showPRShart && <Line options={options} data={data2} />}
     </Container>
   );
 });

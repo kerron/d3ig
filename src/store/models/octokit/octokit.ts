@@ -1,5 +1,4 @@
 import { cast, flow, getParent, Instance, types } from "mobx-state-tree";
-import { type } from "os";
 import { IRootStore } from "..";
 
 interface IChartDataLOC {
@@ -67,15 +66,17 @@ const OctokitStore = types
     locData: types.optional(LOCDataModel, () => LOCDataModel.create()),
     showPRShart: false,
     prsData: types.optional(PrsDataModel, () => PrsDataModel.create({})),
+    isLoading: false,
   })
   .actions((self) => ({
     queryClosedPRs: flow(function* () {
       try {
+        self.isLoading = true;
         const root: IRootStore = getParent(self);
         const resp = yield root.authStore.graphqlWithAuth(`
         {
           repository(name: "fe-react-app-integrated-eclaim", owner: "esure-cloud") {
-            pullRequests(last: 5, states: MERGED) {
+            pullRequests(last: 100, states: MERGED) {
               nodes {
                 additions
                 title
@@ -99,16 +100,17 @@ const OctokitStore = types
 
             return {
               ...prev,
-              [key]: {
-                ...prev[key],
-                [author]: curr.additions + (prev[key]?.[author] || 0),
+              [`${key}`]: {
+                ...prev[`$[key]`],
+                [author]: curr.additions + (prev[`$[key]`]?.[author] || 0),
               },
             };
           },
           {}
         );
-        console.log(formattedObj);
+
         let n: { [key: string]: { [key: string]: number } } = {};
+
         for (const d in formattedObj) {
           n[d] = {
             "toma-popescu-endava": 0,
@@ -124,8 +126,11 @@ const OctokitStore = types
           (prev: { [key: string]: number[] }, curr) => {
             const keys = Object.keys(curr);
             const obj = {};
+
             for (const key of keys) {
-              obj[key] = [...prev[key], curr[key]];
+              const prevArr =
+                Symbol.iterator in Object(prev[key]) ? prev[key] : [];
+              obj[key] = [...prevArr, curr[key]];
             }
             return obj;
           },
@@ -137,7 +142,9 @@ const OctokitStore = types
             tawandaEsure: [],
           }
         );
+
         const lineData: IChartLineData[] = [];
+
         for (const o in v) {
           lineData.push({
             label: o,
@@ -150,15 +157,18 @@ const OctokitStore = types
           datasets: lineData,
         };
 
+        self.showLOCChart = false;
         self.prsData = cast(chartData);
-        console.log(chartData);
+        self.isLoading = false;
         self.showPRShart = true;
       } catch (e) {
+        self.isLoading = false;
         console.log(e);
       }
     }),
     queryLOC: flow(function* () {
       try {
+        self.isLoading = true;
         const root: IRootStore = getParent(self);
         const resp = yield root.authStore.graphqlWithAuth(`
         {
@@ -182,7 +192,6 @@ const OctokitStore = types
         `);
 
         self.queryLOCData = resp;
-        console.log(resp);
 
         const formattedObj = resp.repository.pullRequests.nodes.reduce(
           (prev, curr) => ({
@@ -203,10 +212,12 @@ const OctokitStore = types
         };
 
         self.locData = cast(chartData);
-        console.log(formattedObj);
+        self.showPRShart = false;
+
+        self.isLoading = false;
         self.showLOCChart = true;
-        console.log(chartData);
       } catch (e) {
+        self.isLoading = false;
         console.error(e);
       }
     }),
