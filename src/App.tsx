@@ -44,7 +44,6 @@ const options = {
     },
   },
 };
-const labels = ["January", "February"];
 
 const App = observer(() => {
   const { authStore, octokitStore } = useStore();
@@ -86,7 +85,7 @@ const App = observer(() => {
   };
   const data2 = {
     labels: prsData.labels,
-    datasets: prsData.data.map((d) => d),
+    datasets: [...prsData.datasets],
   };
 
   useEffect(() => {

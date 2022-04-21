@@ -1,4 +1,5 @@
 import { cast, flow, getParent, Instance, types } from "mobx-state-tree";
+import { type } from "os";
 import { IRootStore } from "..";
 
 interface IChartDataLOC {
@@ -14,7 +15,10 @@ interface IChartLineData {
   label: string;
   data: number[];
 }
-
+const ChartLineModel = types.model("ChartLineModel", {
+  label: "",
+  data: types.array(types.number),
+});
 const AuthorModel = types.model("AuthorModel", {
   login: "",
   avatarUrl: "",
@@ -49,7 +53,7 @@ const LOCDataModel = types.model("LOCDataModel", {
 
 const PrsDataModel = types.model("PrsDataModel", {
   labels: types.array(types.string),
-  data: types.array(types.map(types.number)),
+  datasets: types.array(ChartLineModel),
 });
 
 const OctokitStore = types
