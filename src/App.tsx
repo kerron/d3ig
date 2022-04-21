@@ -59,7 +59,7 @@ const options2 = {
     },
     title: {
       display: true,
-      text: "date of PR (with # lines comitted) since January",
+      text: "PRs closed since January",
     },
   },
 };

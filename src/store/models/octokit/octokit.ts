@@ -100,9 +100,9 @@ const OctokitStore = types
 
             return {
               ...prev,
-              [`${key}`]: {
-                ...prev[`$[key]`],
-                [author]: curr.additions + (prev[`$[key]`]?.[author] || 0),
+              [key]: {
+                ...prev[key],
+                [author]: 1 + (prev[key]?.[author] || 0),
               },
             };
           },
