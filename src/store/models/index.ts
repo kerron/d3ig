@@ -1,4 +1,4 @@
-import { types, Instance } from "mobx-state-tree";
+import { types } from "mobx-state-tree";
 import AuthStore, { IAuthStore } from "./auth/auth";
 import OctokitStore, { IOctokitStore } from "./octokit/octokit";
 import OrgsStore, { IOrgsStore } from "./org/org";
@@ -9,7 +9,7 @@ export const RootStore = types.model("RootStore", {
   octokitStore: types.optional(OctokitStore, () => OctokitStore.create()),
 });
 
-export interface IRootStore extends Instance<typeof RootStore> {
+export interface IRootStore {
   authStore: IAuthStore;
   orgStore: IOrgsStore;
   octokitStore: IOctokitStore;

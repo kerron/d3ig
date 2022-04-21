@@ -60,19 +60,16 @@ const AuthStore = types
         const resp = yield self.graphqlWithAuth(`
           {
             repository(name: "fe-react-app-integrated-eclaim", owner: "esure-cloud") {
-              name
-              assignableUsers(first: 3) {
-                edges {
-                  node {
-                    name
-                    pullRequests(last: 1) {
-                      nodes {
-                        title
-                        mergedAt
-                      }
-                    }
+              pullRequests(last: 2, states: MERGED) {
+                nodes {
+                  title
+                  url
+                  mergedAt
+                  author {
+                    login
                   }
                 }
+                totalCount
               }
             }
           }
