@@ -1,0 +1,13 @@
+{
+  "hosting": {
+    "site": "temp-contributions-da702",
+    "public": "build",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

@@ -4,6 +4,23 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBhbBDCdb5rK1rCD3shpybvnBFW0ErDk-Q",
+  authDomain: "temp-contributions.firebaseapp.com",
+  projectId: "temp-contributions",
+  storageBucket: "temp-contributions.appspot.com",
+  messagingSenderId: "218725914046",
+  appId: "1:218725914046:web:fcbbb46ca04d6d6fc615ef",
+  measurementId: "G-1FF7YY6RPF",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
 const theme = createTheme();
 
 ReactDOM.render(
