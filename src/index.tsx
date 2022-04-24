@@ -3,9 +3,34 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-
+import {
+  Chart as ChartJS,
+  RadialLinearScale,
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+
+ChartJS.register(
+  RadialLinearScale,
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const firebaseConfig = {
   apiKey: "AIzaSyBhbBDCdb5rK1rCD3shpybvnBFW0ErDk-Q",
