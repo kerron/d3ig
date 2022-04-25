@@ -10,10 +10,9 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from "@mui/icons-material/Home";
-import ArticleIcon from "@mui/icons-material/Article";
-import DynamicFeedIcon from "@mui/icons-material/DynamicFeed";
 import Avatar from "@mui/material/Avatar";
 
+import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../../hooks/useStore";
 
@@ -62,12 +61,14 @@ const SideBar = observer(() => {
       <Divider />
 
       <List>
-        <ListItem button>
-          <ListItemIcon>
-            <HomeIcon />
-          </ListItemIcon>
-          <ListItemText primary="Home" />
-        </ListItem>
+        <Link to="/" style={{ textDecoration: "none", color: "#000" }}>
+          <ListItem button>
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText primary="Home" />
+          </ListItem>
+        </Link>
       </List>
       <Divider />
       <Typography sx={{ fontWeight: 600, paddingLeft: 2, paddingTop: 1 }}>
@@ -76,16 +77,22 @@ const SideBar = observer(() => {
       <List>
         {contributorsList.length ? (
           contributorsList.map((c) => (
-            <ListItem button key={c.id}>
-              <ListItemIcon>
-                <Avatar
-                  key={c.id}
-                  sx={{ width: 32, height: 32 }}
-                  src={c.avatarURL}
-                />
-              </ListItemIcon>
-              <ListItemText primary={c.login} />
-            </ListItem>
+            <Link
+              to={`user/${c.login}`}
+              key={c.id}
+              style={{ textDecoration: "none", color: "#000" }}
+            >
+              <ListItem button key={c.id}>
+                <ListItemIcon>
+                  <Avatar
+                    key={c.id}
+                    sx={{ width: 32, height: 32 }}
+                    src={c.avatarURL}
+                  />
+                </ListItemIcon>
+                <ListItemText primary={c.login} />
+              </ListItem>
+            </Link>
           ))
         ) : (
           <></>

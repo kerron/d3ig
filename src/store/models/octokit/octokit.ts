@@ -77,6 +77,26 @@ const ContributorCharthModel = types.model("ContributorCharthModel", {
   datasets: types.array(DatasetModel),
 });
 
+const ContributionDataset = types.model("ContributionGraph", {
+  labels: types.array(types.string),
+  datasets: types.map(types.number),
+});
+
+const ContributionGraph = types.model("ContributionGraph", {
+  labels: types.array(types.string),
+  datasets: types.array(ContributionDataset),
+});
+
+const UserModel = types.model("UserModel", {
+  additions: types.array(types.number),
+  contributionGraph: types.optional(ContributionGraph, () =>
+    ContributionGraph.create()
+  ),
+  lastContributed: types.string,
+  loc: types.number,
+  totalPrs: types.number,
+});
+
 const OctokitStore = types
   .model("OctokitStore", {
     homeChartData: types.optional(RepositoryModel, () =>
@@ -96,6 +116,7 @@ const OctokitStore = types
     ),
     daysWithPR: types.optional(types.array(types.string), []),
     totalLOCState: 0,
+    userData: types.map(UserModel),
   })
   .actions((self) => ({
     getHomeChartData: flow(function* () {
@@ -128,6 +149,7 @@ const OctokitStore = types
         root.octokitStore.getChartLOC();
         root.octokitStore.getContributors();
         root.octokitStore.getRecentActivity();
+        root.octokitStore.getUserData();
         self.isLoading = false;
         self.showHomeCharts = true;
         return;
@@ -137,6 +159,41 @@ const OctokitStore = types
         console.log(e);
       }
     }),
+    getUserData() {
+      const userObjByName =
+        self.homeChartData.repository.pullRequests.nodes.reduce(
+          (prev, curr) => ({
+            ...prev,
+            [curr.author.login]: {
+              additions: [
+                ...(prev[curr.author.login]?.additions || []),
+                curr.additions,
+              ],
+              contributionGraph: {
+                labels: [
+                  ...(prev[curr.author.login]?.contributionGraph?.labels || []),
+                  moment(curr.mergedAt).format(DATE_FORMAT_SHORT),
+                ],
+                datasets: {
+                  label: curr.author.login,
+                  data: {
+                    ...(prev[curr.author.login]?.contributionGraph?.datasets
+                      ?.data || {}),
+                    [curr.mergedAt.split("T")[0]]:
+                      (prev[curr.author.login]?.contributionGraph?.datasets
+                        ?.data[curr.mergedAt.split("T")[0]] || 0) + 1,
+                  },
+                },
+              },
+              lastContributed: curr.mergedAt,
+              loc: (prev[curr.author.login]?.loc || 0) + curr.additions,
+              totalPrs: (prev[curr.author.login]?.totalPrs || 0) + 1,
+            },
+          }),
+          {}
+        );
+      self.userData = cast(userObjByName);
+    },
     getChartLOC() {
       const formattedObj =
         self.homeChartData.repository.pullRequests.nodes.reduce(
@@ -267,7 +324,6 @@ const OctokitStore = types
           datasets,
         });
 
-        console.log("called");
         self.contributors = contributors;
       } catch (error) {
         console.log(error);
@@ -296,10 +352,8 @@ const OctokitStore = types
     },
     get repoActivity(): { increased: boolean; percentage: number } {
       const len = self.weeklyActivity.length;
-      console.log("len", len);
       const currWeek = self.weeklyActivity[len - 1];
       const prevWeek = self.weeklyActivity[len - 2];
-      console.log(currWeek, prevWeek);
       const percentage = Math.round(((prevWeek - currWeek) / prevWeek) * 100);
 
       return { increased: currWeek > prevWeek, percentage };
@@ -316,10 +370,7 @@ const OctokitStore = types
       return self.homeChartData.repository.pullRequests.totalCount;
     },
     get firstPRDate(): string {
-      if (self.daysWithPR.at(0)) {
-        return moment(self.daysWithPR.at(0)).format(DATE_FORMAT);
-      }
-      return "";
+      return self.daysWithPR.at(0) || "";
     },
     get totalLOC(): string {
       return self.totalLOCState.toLocaleString();

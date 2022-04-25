@@ -8,7 +8,8 @@ import { useStore } from "../../hooks/useStore";
 import { observer } from "mobx-react-lite";
 import SideBar from "./components/SideBar/SideBar";
 import { DrawerHeader, Main } from "./styled";
-
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import Member from "../Member/Member";
 const Home = observer(() => {
   const {
     uiStore: { getDrawerState },
@@ -25,7 +26,11 @@ const Home = observer(() => {
           <Overview />
         </Grid>
         <Grid container>
-          <MainGraphs />
+          <Routes>
+            <Route path="/" element={<MainGraphs />} />
+            <Route path="user/:username" element={<Member />} />
+            <Route path="*" element={<MainGraphs />} />
+          </Routes>
         </Grid>
       </Main>
     </Box>

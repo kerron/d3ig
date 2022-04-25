@@ -19,6 +19,7 @@ import {
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import { BrowserRouter } from "react-router-dom";
 
 ChartJS.register(
   RadialLinearScale,
@@ -53,7 +54,9 @@ const theme = createTheme();
 ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </ThemeProvider>
   </React.StrictMode>,
   document.getElementById("root")

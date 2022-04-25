@@ -44,27 +44,27 @@ const Overview = () => {
       <OverviewCard
         title={
           <ChartTitle
-            tooltipText={`Pull requests let you tell others about changes you've pushed to a branch in a repository on GitHub. It may include one or more tickets from the sprint. This is a count of pull requests done since ${firstPRDate}.`}
+            tooltipText={`Pull requests let you tell others about changes you've pushed to a branch in a repository on GitHub. It may include one or more tickets from the sprint. This is a count of pull requests done since ${firstPRDate} 2022.`}
             title="Pull requests closed"
           />
         }
         body={totalPRs}
-        caption={`since ${firstPRDate}`}
+        caption={`since ${firstPRDate} 2022`}
       />
       <OverviewCard
         title={
           <ChartTitle
             tooltipText={`This shows how long ago the most recent pull request closed, and who was the contributor.`}
-            title="Most recent contribution"
+            title="Last contribution"
           />
         }
         body={moment(lastMerge.mergedAt).fromNow()}
         caption={`by ${lastMerge.author.login}`}
       />
       <OverviewCard
-        title="Total lines of code in project"
+        title="Project lines of code"
         body={totalLOC}
-        caption={`since ${firstPRDate}`}
+        caption={`since ${firstPRDate} 2022`}
       />
     </Grid>
   );
