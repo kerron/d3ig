@@ -18,6 +18,7 @@ import {
 } from "chart.js";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
 ChartJS.register(
   RadialLinearScale,
@@ -27,6 +28,7 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
+  ChartDataLabels,
   Title,
   Tooltip,
   Legend

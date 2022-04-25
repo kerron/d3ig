@@ -2,7 +2,7 @@ import { Grid, Paper, Typography } from "@mui/material";
 import React from "react";
 
 interface IOverviewCard {
-  title: string;
+  title: string | React.ReactNode;
   body: string | React.ReactNode;
   caption: string | React.ReactNode;
 }

@@ -2,23 +2,10 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
+import Tooltip from "@mui/material/Tooltip";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import { observer } from "mobx-react-lite";
-import { styled } from "@mui/material/styles";
 import { IInfoTooltip } from "../../../../utils/types";
-
-const TooltipStyled = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: theme.palette.common.white,
-    color: "rgba(0, 0, 0, 0.87)",
-    boxShadow: theme.shadows[1],
-    fontSize: 11,
-    padding: theme.spacing(2),
-  },
-}));
 
 const InfoTooltip: React.FC<IInfoTooltip> = observer(({ title }) => {
   const [showInfoTooltip, setShowInfoTooltip] = React.useState(false);
@@ -27,7 +14,7 @@ const InfoTooltip: React.FC<IInfoTooltip> = observer(({ title }) => {
   const handleTooltipOpen = () => setShowInfoTooltip(true);
 
   return (
-    <Box sx={{ marginLeft: 1 }}>
+    <Box sx={{ marginLeft: 0 }}>
       <ClickAwayListener onClickAway={handleTooltipClose}>
         <Tooltip
           PopperProps={{
@@ -38,10 +25,18 @@ const InfoTooltip: React.FC<IInfoTooltip> = observer(({ title }) => {
           disableFocusListener
           disableHoverListener
           disableTouchListener
-          title={title}
+          title={<Box sx={{ fontSize: 14, paddingY: 1 }}>{title}</Box>}
           arrow
         >
-          <IconButton aria-label="open tooltip" onClick={handleTooltipOpen}>
+          <IconButton
+            aria-label="open tooltip"
+            onClick={handleTooltipOpen}
+            sx={{
+              color: "GrayText",
+              padding: 0,
+              paddingRight: 1,
+            }}
+          >
             <InfoOutlinedIcon sx={{ color: "GrayText" }} />
           </IconButton>
         </Tooltip>

@@ -9,7 +9,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import TimeLineIcon from "@mui/icons-material/TimelineRounded";
+import HomeIcon from "@mui/icons-material/Home";
 import ArticleIcon from "@mui/icons-material/Article";
 import DynamicFeedIcon from "@mui/icons-material/DynamicFeed";
 import Avatar from "@mui/material/Avatar";
@@ -58,28 +58,15 @@ const SideBar = observer(() => {
           )}
         </IconButton>
       </DrawerHeader>
+
       <Divider />
+
       <List>
-        <ListItem button key={1}>
+        <ListItem button>
           <ListItemIcon>
-            <TimeLineIcon />
+            <HomeIcon />
           </ListItemIcon>
-          <ListItemText primary="PRs Closed" secondary="Tickets completed" />
-        </ListItem>
-        <ListItem button key={2}>
-          <ListItemIcon>
-            <ArticleIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary="Lines of Code"
-            secondary="Lines of Code written"
-          />
-        </ListItem>
-        <ListItem button key={3}>
-          <ListItemIcon>
-            <DynamicFeedIcon />
-          </ListItemIcon>
-          <ListItemText primary="Activity" secondary="Overall contributions" />
+          <ListItemText primary="Home" />
         </ListItem>
       </List>
       <Divider />

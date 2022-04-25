@@ -6,8 +6,8 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../hooks/useStore";
-import InfoTooltip from "./components/InfoTooltip/InfoTooltip";
 import Contributors from "./components/Contributors/Contributors";
+import { Box } from "@mui/material";
 
 const drawerWidth = 240;
 
@@ -60,19 +60,27 @@ const Header = observer(() => {
             }}
           />
         </IconButton>
-        <Typography
-          variant="h2"
-          noWrap
+        <Box
           sx={{
-            fontWeight: 600,
-            fontSize: 24,
-            color: "#2a2e3a",
+            display: "flex",
+            justifyContent: "space-between",
+            flex: 1,
+            alignItems: "center",
           }}
         >
-          fe-react-app-integrated-eclaim
-        </Typography>
-        <InfoTooltip title="The number of pull requests closed in the past 24hrs." />
-        <Contributors />
+          <Typography
+            variant="h2"
+            noWrap
+            sx={{
+              fontWeight: 600,
+              fontSize: 24,
+              color: "#2a2e3a",
+            }}
+          >
+            Digital Claims Integrated App
+          </Typography>
+          <Contributors />
+        </Box>
       </Toolbar>
     </AppBar>
   );

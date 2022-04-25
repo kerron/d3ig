@@ -19,3 +19,8 @@ export interface IProductivity {
 export interface IInfoTooltip {
   title: string;
 }
+
+export interface IChartTitle {
+  title: string;
+  tooltipText: string;
+}

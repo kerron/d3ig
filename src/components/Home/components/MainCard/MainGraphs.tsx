@@ -1,36 +1,37 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Grid } from "@mui/material";
 import MainCard from "./MainCard";
 import LOC from "../../../Graphs/LOC";
-import ContributionChart from "../../../Graphs/ContributionChart";
 import ClosedPRs from "../../../Graphs/ClosedPRs";
 import { useStore } from "../../../../hooks/useStore";
-import InfoTooltip from "../../../Header/components/InfoTooltip/InfoTooltip";
+import ChartTitle from "../../../ChartTitle/ChartTitle";
 
-export const Title = () => {
+const MainGraphs = () => {
   const {
     octokitStore: { firstPRDate },
   } = useStore();
   return (
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <InfoTooltip
-        title={`Shows the number of pull requests (tasks) completed by each team member since ${firstPRDate}. You can filter by clicking on the contributor's name.`}
-      />
-      <Typography>Team's Activity</Typography>
-    </Box>
-  );
-};
-
-const MainGraphs = () => {
-  return (
     <Grid justifyContent="space-between" spacing={2} container>
       <Grid item xs={12} sm={12}>
-        <MainCard title={<Title />} graph={<ClosedPRs />} />
+        <MainCard
+          title={
+            <ChartTitle
+              tooltipText={`Shows the number of pull requests (tasks) completed by each team member since ${firstPRDate}. You can filter by clicking on a contributor's name.`}
+              title="Team Members' Activity"
+            />
+          }
+          graph={<ClosedPRs />}
+        />
       </Grid>
       <Grid item xs={12} sm={6}>
-        <MainCard title="Overall contributions" graph={<ContributionChart />} />
-      </Grid>
-      <Grid item xs={12} sm={6}>
-        <MainCard title="Total LOC By Contributor" graph={<LOC />} />
+        <MainCard
+          title={
+            <ChartTitle
+              tooltipText={`Shows the total lines of code contributed by each team member since ${firstPRDate}. You can filter by clicking on a contributor's name.`}
+              title="Code Contribution"
+            />
+          }
+          graph={<LOC />}
+        />
       </Grid>
     </Grid>
   );

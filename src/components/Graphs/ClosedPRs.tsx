@@ -1,10 +1,10 @@
 import { Line } from "react-chartjs-2";
 import { useStore } from "../../hooks/useStore";
 import { getRandomColor } from "../../utils/graphs";
-import moment from "moment";
+
 export const ClosedPRs = () => {
   const { octokitStore } = useStore();
-  const { prsData, firstPRDate } = octokitStore;
+  const { prsData } = octokitStore;
 
   const OPTIONS_CLOSED_PRS = {
     responsive: true,
@@ -13,11 +13,11 @@ export const ClosedPRs = () => {
         position: "bottom" as const,
       },
       title: {
-        display: true,
-        text: `PRs closed since ${firstPRDate} `,
+        display: false,
       },
     },
   };
+
   const GRAPH_DATA_PR = {
     labels: prsData.labels,
     datasets: prsData.datasets.map((v) => {

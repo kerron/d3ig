@@ -1,6 +1,7 @@
 import { cast, flow, getParent, Instance, types } from "mobx-state-tree";
 import moment from "moment";
 import { IRootStore } from "..";
+import { DATE_FORMAT, DATE_FORMAT_SHORT } from "../../../constants/constants";
 import { getRandomColor } from "../../../utils/graphs";
 import { TContributor } from "../../../utils/types";
 
@@ -94,7 +95,7 @@ const OctokitStore = types
       new Array(52).fill(0)
     ),
     daysWithPR: types.optional(types.array(types.string), []),
-    totalLOCState: types.number,
+    totalLOCState: 0,
   })
   .actions((self) => ({
     getHomeChartData: flow(function* () {
@@ -179,6 +180,7 @@ const OctokitStore = types
 
       for (const d in formattedObj) {
         n[d] = {
+          kerron: 0,
           "toma-popescu-endava": 0,
           AlexandruLoghin2: 0,
           bratciprian: 0,
@@ -201,6 +203,7 @@ const OctokitStore = types
           return obj;
         },
         {
+          kerron: [],
           "toma-popescu-endava": [],
           AlexandruLoghin2: [],
           bratciprian: [],
@@ -217,7 +220,9 @@ const OctokitStore = types
           data: v[o],
         });
       }
-      const labels = Object.keys(formattedObj);
+      const labels = Object.keys(formattedObj).map((v) =>
+        moment(new Date(v)).format(DATE_FORMAT_SHORT)
+      );
       const chartData: IChartDataPRS = {
         labels,
         datasets: lineData,
@@ -312,12 +317,40 @@ const OctokitStore = types
     },
     get firstPRDate(): string {
       if (self.daysWithPR.at(0)) {
-        return moment(self.daysWithPR.at(0)).format("DD MMM yy");
+        return moment(self.daysWithPR.at(0)).format(DATE_FORMAT);
       }
       return "";
     },
     get totalLOC(): string {
       return self.totalLOCState.toLocaleString();
+    },
+    get lastMerge(): {
+      author: {
+        login: string;
+        avatarUrl: string;
+      };
+      mergedAt: string;
+    } {
+      const len = self.homeChartData.repository.pullRequests.nodes.length;
+      if (!len)
+        return {
+          author: {
+            login: "",
+            avatarUrl: "",
+          },
+          mergedAt: "",
+        };
+      const {
+        mergedAt,
+        author: { login, avatarUrl },
+      } = self.homeChartData.repository.pullRequests.nodes[len - 1];
+      return {
+        mergedAt,
+        author: {
+          login,
+          avatarUrl,
+        },
+      };
     },
   }));
 
