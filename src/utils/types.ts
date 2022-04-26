@@ -24,3 +24,19 @@ export interface IChartTitle {
   title: string;
   tooltipText: string;
 }
+
+export interface IUserData {
+  additions: number;
+  contributionGraph: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: {
+        [key: string]: number;
+      };
+    };
+  };
+  lastContributed: string;
+  loc: number;
+  totalPrs: number;
+}

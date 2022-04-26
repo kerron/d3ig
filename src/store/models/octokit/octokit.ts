@@ -1,9 +1,9 @@
 import { cast, flow, getParent, Instance, types } from "mobx-state-tree";
 import moment from "moment";
 import { IRootStore } from "..";
-import { DATE_FORMAT, DATE_FORMAT_SHORT } from "../../../constants/constants";
+import { DATE_FORMAT_SHORT } from "../../../constants/constants";
 import { getRandomColor } from "../../../utils/graphs";
-import { TContributor } from "../../../utils/types";
+import { IUserData, TContributor } from "../../../utils/types";
 
 interface IChartDataLOC {
   labels: string[];
@@ -116,7 +116,8 @@ const OctokitStore = types
     ),
     daysWithPR: types.optional(types.array(types.string), []),
     totalLOCState: 0,
-    userData: types.map(UserModel),
+    userDataState: types.map(types.string),
+    currentUserState: types.map(types.string),
   })
   .actions((self) => ({
     getHomeChartData: flow(function* () {
@@ -185,14 +186,14 @@ const OctokitStore = types
                   },
                 },
               },
-              lastContributed: curr.mergedAt,
-              loc: (prev[curr.author.login]?.loc || 0) + curr.additions,
-              totalPrs: (prev[curr.author.login]?.totalPrs || 0) + 1,
+              lastContributed: curr.mergedAt || "",
+              loc: (prev[curr.author.login]?.loc || 0) + curr.additions || 0,
+              totalPrs: (prev[curr.author.login]?.totalPrs || 0) + 1 || 0,
             },
           }),
           {}
         );
-      self.userData = cast(userObjByName);
+      self.userDataState = cast(userObjByName);
     },
     getChartLOC() {
       const formattedObj =
@@ -342,6 +343,11 @@ const OctokitStore = types
         console.log(error);
       }
     }),
+    setCurrentUser(username: string) {
+      console.log("set", username);
+      console.log(self.userDataState[username]);
+      self.currentUserState = self.userDataState[username];
+    },
   }))
   .views((self) => ({
     get contributorsList(): TContributor[] {
@@ -402,6 +408,10 @@ const OctokitStore = types
           avatarUrl,
         },
       };
+    },
+    get currentUser(): any {
+      console.log("sjd", self.currentUserState);
+      return self.currentUserState;
     },
   }));
 
