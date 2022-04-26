@@ -9,12 +9,13 @@ const Member = () => {
   } = useStore();
   useEffect(() => {
     if (username) {
+      console.log("setting user");
       setCurrentUser(username);
     }
   }, [username, setCurrentUser]);
 
   useEffect(() => {
-    console.log("user ui", currentUser.lastContributed);
+    console.log("user ui", currentUser);
   }, [currentUser]);
 
   return <div>{username}</div>;

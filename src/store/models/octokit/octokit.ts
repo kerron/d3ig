@@ -77,14 +77,16 @@ const ContributorCharthModel = types.model("ContributorCharthModel", {
   datasets: types.array(DatasetModel),
 });
 
-const ContributionDataset = types.model("ContributionGraph", {
-  labels: types.array(types.string),
-  datasets: types.map(types.number),
+const ContributionGraphDatasets = types.model("ContributionGraphDatasets", {
+  label: types.optional(types.string, ""),
+  data: types.map(types.number),
 });
 
 const ContributionGraph = types.model("ContributionGraph", {
-  labels: types.array(types.string),
-  datasets: types.array(ContributionDataset),
+  labels: types.optional(types.array(types.string), []),
+  datasets: types.optional(ContributionGraphDatasets, () =>
+    ContributionGraphDatasets.create()
+  ),
 });
 
 const UserModel = types.model("UserModel", {
@@ -92,9 +94,9 @@ const UserModel = types.model("UserModel", {
   contributionGraph: types.optional(ContributionGraph, () =>
     ContributionGraph.create()
   ),
-  lastContributed: types.string,
-  loc: types.number,
-  totalPrs: types.number,
+  lastContributed: types.optional(types.string, ""),
+  loc: types.optional(types.number, 0),
+  totalPrs: types.optional(types.number, 0),
 });
 
 const OctokitStore = types
@@ -116,8 +118,8 @@ const OctokitStore = types
     ),
     daysWithPR: types.optional(types.array(types.string), []),
     totalLOCState: 0,
-    userDataState: types.map(types.string),
-    currentUserState: types.map(types.string),
+    userDataState: types.frozen<IUserData>(),
+    currentUserState: types.optional(UserModel, () => UserModel.create()),
   })
   .actions((self) => ({
     getHomeChartData: flow(function* () {
@@ -192,8 +194,9 @@ const OctokitStore = types
             },
           }),
           {}
-        );
-      self.userDataState = cast(userObjByName);
+        ) as IUserData;
+
+      self.userDataState = userObjByName;
     },
     getChartLOC() {
       const formattedObj =
@@ -344,7 +347,7 @@ const OctokitStore = types
       }
     }),
     setCurrentUser(username: string) {
-      console.log("set", username);
+      if (!self.userDataState) return;
       console.log(self.userDataState[username]);
       self.currentUserState = self.userDataState[username];
     },
