@@ -322,7 +322,6 @@ const OctokitStore = types
         self.inActiveMembersState = contributors.filter(
           (v) => !ACTIVE_MEMBERS[v.login]
         );
-        console.log(self.activeMembersState);
         const labels = contributors.map((c: TContributor) => c.login);
         const data = contributors.map((c: TContributor) => c.contributions);
         const backgroundColor = contributors.map((c: TContributor) =>

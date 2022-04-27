@@ -1,6 +1,6 @@
 import { Line } from "react-chartjs-2";
+import { GRAPH_COLORS } from "../../constants/constants";
 import { useStore } from "../../hooks/useStore";
-import { getRandomColor } from "../../utils/graphs";
 
 export const ClosedPRs = () => {
   const { octokitStore } = useStore();
@@ -26,12 +26,11 @@ export const ClosedPRs = () => {
 
   const GRAPH_DATA_PR = {
     labels: prsData.labels,
-    datasets: prsData.datasets.map((v) => {
-      const color = getRandomColor();
+    datasets: prsData.datasets.map((v, i) => {
       return {
         ...v,
-        borderColor: color,
-        backgroundColor: color,
+        borderColor: GRAPH_COLORS[i],
+        backgroundColor: GRAPH_COLORS[i],
         pointRadius: 5,
         tension: 0.2,
       };

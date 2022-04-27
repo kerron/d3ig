@@ -3,23 +3,22 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { DATE_FORMAT_DAY, DATE_FORMAT_SHORT } from "../../constants/constants";
+import { DATE_FORMAT_DAY, getChartRange } from "../../constants/constants";
 import { useStore } from "../../hooks/useStore";
 import ChartTitle from "../ChartTitle/ChartTitle";
 import MemberPRs from "../Graphs/MemberPRs";
 import MainCard from "../Home/components/MainCard/MainCard";
-import Overview from "../Home/components/Overview/Overview";
 import OverviewMember from "../Home/components/Overview/OverviewMember";
 import Spinner from "../Spinner/Spinner";
 
 const Member = observer(() => {
-  const [prepLabels, setPrepLabels] = useState([]);
+  const [prepLabels, setPrepLabels] = useState<string[]>([]);
   const [prepData, setPrepData] = useState<number[]>([]);
 
   const { username } = useParams();
 
   const {
-    octokitStore: { currentUser, setCurrentUser },
+    octokitStore: { currentUser, firstPRDate, setCurrentUser },
   } = useStore();
   const {
     contributionGraph: {
@@ -37,14 +36,14 @@ const Member = observer(() => {
   useEffect(() => {
     if (!currentUser || !data) return;
     const l = labels
-      .filter((v, i) => labels.indexOf(v) === i)
+      .filter((v, i, a) => a.indexOf(v) === i)
       .sort()
       .map((v) => moment(v).format(DATE_FORMAT_DAY));
+
     const d = Object.values(data) as number[];
-    console.log("c", d);
     setPrepLabels(l);
     setPrepData(d);
-  }, [currentUser, data, labels]);
+  }, [firstPRDate, currentUser, data, labels]);
 
   if (!currentUser || !data) return <Spinner />;
 
@@ -62,7 +61,13 @@ const Member = observer(() => {
                 title={`${username}'s contributions`}
               />
             }
-            graph={<MemberPRs labels={prepLabels} data={prepData} />}
+            graph={
+              <MemberPRs
+                labels={prepLabels}
+                data={prepData}
+                currentUser={username}
+              />
+            }
           />
         </Grid>
       </Grid>

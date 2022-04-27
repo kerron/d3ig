@@ -1,7 +1,8 @@
 import { Line } from "react-chartjs-2";
+import { USER_GRAPH_COLORS } from "../../constants/constants";
 import { getRandomColor } from "../../utils/graphs";
 
-export const MemberPRs = ({ labels, data }) => {
+export const MemberPRs = ({ labels, data, currentUser }) => {
   const OPTIONS_CLOSED_PRS = {
     responsive: true,
     plugins: {
@@ -26,8 +27,8 @@ export const MemberPRs = ({ labels, data }) => {
     datasets: [
       {
         data,
-        borderColor: "#53C5CC",
-        backgroundColor: "#7DE6ED",
+        backgroundColor: USER_GRAPH_COLORS[currentUser][0],
+        borderColor: USER_GRAPH_COLORS[currentUser][1],
         pointRadius: 5,
         tension: 0.2,
       },
