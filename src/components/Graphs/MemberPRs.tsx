@@ -1,11 +1,7 @@
 import { Line } from "react-chartjs-2";
-import { useStore } from "../../hooks/useStore";
 import { getRandomColor } from "../../utils/graphs";
 
-export const ClosedPRs = () => {
-  const { octokitStore } = useStore();
-  const { prsData } = octokitStore;
-
+export const MemberPRs = ({ labels, data }) => {
   const OPTIONS_CLOSED_PRS = {
     responsive: true,
     plugins: {
@@ -16,6 +12,7 @@ export const ClosedPRs = () => {
         },
       },
       legend: {
+        display: false,
         position: "bottom" as const,
       },
       title: {
@@ -25,20 +22,19 @@ export const ClosedPRs = () => {
   };
 
   const GRAPH_DATA_PR = {
-    labels: prsData.labels,
-    datasets: prsData.datasets.map((v) => {
-      const color = getRandomColor();
-      return {
-        ...v,
-        borderColor: color,
-        backgroundColor: color,
+    labels,
+    datasets: [
+      {
+        data,
+        borderColor: "#53C5CC",
+        backgroundColor: "#7DE6ED",
         pointRadius: 5,
         tension: 0.2,
-      };
-    }),
+      },
+    ],
   };
 
   return <Line options={OPTIONS_CLOSED_PRS} data={GRAPH_DATA_PR} />;
 };
 
-export default ClosedPRs;
+export default MemberPRs;

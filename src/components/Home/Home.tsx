@@ -8,7 +8,7 @@ import { useStore } from "../../hooks/useStore";
 import { observer } from "mobx-react-lite";
 import SideBar from "./components/SideBar/SideBar";
 import { DrawerHeader, Main } from "./styled";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Member from "../Member/Member";
 const Home = observer(() => {
   const {
@@ -22,9 +22,7 @@ const Home = observer(() => {
       <SideBar />
       <Main open={getDrawerState()}>
         <DrawerHeader />
-        <Grid mb={3} container>
-          <Overview />
-        </Grid>
+
         <Grid container>
           <Routes>
             <Route path="/" element={<MainGraphs />} />

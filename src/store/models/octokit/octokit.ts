@@ -1,7 +1,10 @@
 import { cast, flow, getParent, Instance, types } from "mobx-state-tree";
 import moment from "moment";
 import { IRootStore } from "..";
-import { DATE_FORMAT_SHORT } from "../../../constants/constants";
+import {
+  ACTIVE_MEMBERS,
+  DATE_FORMAT_SHORT,
+} from "../../../constants/constants";
 import { getRandomColor } from "../../../utils/graphs";
 import { IUserData, TContributor } from "../../../utils/types";
 
@@ -72,20 +75,20 @@ const DatasetModel = types.model("DatasetModel", {
   backgroundColor: types.array(types.string),
 });
 
-const ContributorCharthModel = types.model("ContributorCharthModel", {
+const ContributorChartModel = types.model("ContributorChartModel", {
   labels: types.array(types.string),
   datasets: types.array(DatasetModel),
 });
 
 const ContributionGraphDatasets = types.model("ContributionGraphDatasets", {
   label: types.optional(types.string, ""),
-  data: types.map(types.number),
+  data: types.frozen(),
 });
 
 const ContributionGraph = types.model("ContributionGraph", {
   labels: types.optional(types.array(types.string), []),
   datasets: types.optional(ContributionGraphDatasets, () =>
-    ContributionGraphDatasets.create()
+    ContributionGraphDatasets.create({})
   ),
 });
 
@@ -108,9 +111,11 @@ const OctokitStore = types
     prsData: types.optional(PrsDataModel, () => PrsDataModel.create({})),
     isLoading: false,
     showHomeCharts: false,
+    activeMembersState: types.optional(types.array(ContributorModel), []),
+    inActiveMembersState: types.optional(types.array(ContributorModel), []),
     contributors: types.optional(types.array(ContributorModel), []),
-    contributionChart: types.optional(ContributorCharthModel, () =>
-      ContributorCharthModel.create()
+    contributionChart: types.optional(ContributorChartModel, () =>
+      ContributorChartModel.create()
     ),
     weeklyActivity: types.optional(
       types.array(types.number),
@@ -120,6 +125,7 @@ const OctokitStore = types
     totalLOCState: 0,
     userDataState: types.frozen<IUserData>(),
     currentUserState: types.optional(UserModel, () => UserModel.create()),
+    currentUsernameState: types.optional(types.string, ""),
   })
   .actions((self) => ({
     getHomeChartData: flow(function* () {
@@ -175,7 +181,7 @@ const OctokitStore = types
               contributionGraph: {
                 labels: [
                   ...(prev[curr.author.login]?.contributionGraph?.labels || []),
-                  moment(curr.mergedAt).format(DATE_FORMAT_SHORT),
+                  curr.mergedAt.split("T")[0],
                 ],
                 datasets: {
                   label: curr.author.login,
@@ -310,7 +316,13 @@ const OctokitStore = types
             (a: TContributor, b: TContributor) =>
               b.contributions - a.contributions
           );
-
+        self.activeMembersState = contributors.filter(
+          (v) => ACTIVE_MEMBERS[v.login]
+        );
+        self.inActiveMembersState = contributors.filter(
+          (v) => !ACTIVE_MEMBERS[v.login]
+        );
+        console.log(self.activeMembersState);
         const labels = contributors.map((c: TContributor) => c.login);
         const data = contributors.map((c: TContributor) => c.contributions);
         const backgroundColor = contributors.map((c: TContributor) =>
@@ -347,8 +359,9 @@ const OctokitStore = types
       }
     }),
     setCurrentUser(username: string) {
+      if (!username) return;
+      self.currentUsernameState = username;
       if (!self.userDataState) return;
-      console.log(self.userDataState[username]);
       self.currentUserState = self.userDataState[username];
     },
   }))
@@ -413,8 +426,16 @@ const OctokitStore = types
       };
     },
     get currentUser(): any {
-      console.log("sjd", self.currentUserState);
       return self.currentUserState;
+    },
+    get currentUsername(): string {
+      return self.currentUsernameState;
+    },
+    get activeMemebers(): TContributor[] {
+      return self.activeMembersState;
+    },
+    get inActiveMemebers(): TContributor[] {
+      return self.inActiveMembersState;
     },
   }));
 

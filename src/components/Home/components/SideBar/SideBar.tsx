@@ -30,7 +30,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 const SideBar = observer(() => {
   const theme = useTheme();
   const {
-    octokitStore: { contributorsList },
+    octokitStore: { activeMemebers, inActiveMemebers },
     uiStore: { getDrawerState, setDrawerState },
   } = useStore();
 
@@ -72,11 +72,11 @@ const SideBar = observer(() => {
       </List>
       <Divider />
       <Typography sx={{ fontWeight: 600, paddingLeft: 2, paddingTop: 1 }}>
-        Contributors
+        Current Team
       </Typography>
       <List>
-        {contributorsList.length ? (
-          contributorsList.map((c) => (
+        {activeMemebers.length ? (
+          activeMemebers.map((c) => (
             <Link
               to={`user/${c.login}`}
               key={c.id}
@@ -93,6 +93,28 @@ const SideBar = observer(() => {
                 <ListItemText primary={c.login} />
               </ListItem>
             </Link>
+          ))
+        ) : (
+          <></>
+        )}
+      </List>
+      <Divider />
+      <Typography sx={{ fontWeight: 600, paddingLeft: 2, paddingTop: 1 }}>
+        Inactive contributors
+      </Typography>
+      <List>
+        {inActiveMemebers.length ? (
+          inActiveMemebers.map((c) => (
+            <ListItem button key={c.id} disabled>
+              <ListItemIcon>
+                <Avatar
+                  key={c.id}
+                  sx={{ width: 32, height: 32 }}
+                  src={c.avatarURL}
+                />
+              </ListItemIcon>
+              <ListItemText primary={c.login} />
+            </ListItem>
           ))
         ) : (
           <></>

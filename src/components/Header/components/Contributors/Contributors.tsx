@@ -4,10 +4,10 @@ import { useStore } from "../../../../hooks/useStore";
 
 const Contributors = observer(() => {
   const {
-    octokitStore: { contributorsList },
+    octokitStore: { activeMemebers },
   } = useStore();
 
-  if (!contributorsList.length) return <></>;
+  if (!activeMemebers.length) return <></>;
   return (
     <AvatarGroup
       max={8}
@@ -21,7 +21,7 @@ const Contributors = observer(() => {
         },
       }}
     >
-      {contributorsList.map((c) => (
+      {activeMemebers.map((c) => (
         <Avatar
           key={c.id}
           alt={c.login}
