@@ -50,7 +50,7 @@ const Overview = () => {
       <OverviewCard
         title={
           <ChartTitle
-            tooltipText={`Pull requests let you tell others about changes you've pushed to a branch in a repository on GitHub. It may include one or more tickets from the sprint. This is a count of pull requests done since ${firstPRDate} 2022.`}
+            tooltipText={`Pull requests can be considered as a unit of work. It may include one or more tickets from the sprint. This shows the total pull requests done since ${firstPRDate} 2022.`}
             title="Pull requests closed"
           />
         }
@@ -60,7 +60,7 @@ const Overview = () => {
       <OverviewCard
         title={
           <ChartTitle
-            tooltipText={`This shows how long ago the most recent pull request closed, and who was the contributor.`}
+            tooltipText="This shows when the most recent pull request was closed, and who was the contributor."
             title="Last contribution"
           />
         }
@@ -70,7 +70,7 @@ const Overview = () => {
       <OverviewCard
         title={
           <ChartTitle
-            tooltipText={`This shows the average time it take the team to complete a code review.`}
+            tooltipText="This shows the average time it take the team to code review a pull request."
             title="Average time in code review"
           />
         }
@@ -78,7 +78,7 @@ const Overview = () => {
         caption={`since ${firstPRDate} 2022`}
       />
       <OverviewCard
-        title="Project lines of code"
+        title="Lines of code added"
         body={totalLOC}
         caption={`since ${firstPRDate} 2022`}
       />
