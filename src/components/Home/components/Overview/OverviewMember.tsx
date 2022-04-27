@@ -1,10 +1,7 @@
 import { Grid, Typography } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import {
-  DATE_FORMAT,
-  DATE_FORMAT_SHORT,
-} from "../../../../constants/constants";
+import { DATE_FORMAT } from "../../../../constants/constants";
 import { useStore } from "../../../../hooks/useStore";
 import { IProductivity } from "../../../../utils/types";
 import ChartTitle from "../../../ChartTitle/ChartTitle";
@@ -44,6 +41,7 @@ const OverviewMember = () => {
       currentUsername,
       currentUser: { additions, lastContributed, loc, totalPrs },
       firstPRDate,
+      totalPRs,
       totalLOC,
     },
   } = useStore();
@@ -52,13 +50,13 @@ const OverviewMember = () => {
     (loc / parseInt(totalLOC.replace(/,/g, ""))) *
     100
   ).toFixed(1);
-
+  const percentagePRs = ((totalPrs / totalPRs) * 100).toFixed(1);
   return (
     <Grid spacing={2} alignItems="stretch" container>
       <OverviewCard
         title={
           <ChartTitle
-            tooltipText={`Pull requests completed by ${currentUsername} since ${firstPRDate} 2022.`}
+            tooltipText={`Total pull requests completed by ${currentUsername} since ${firstPRDate} 2022.`}
             title="Pull requests completed"
           />
         }
@@ -74,6 +72,16 @@ const OverviewMember = () => {
         }
         body={moment(lastContributed).fromNow()}
         caption={`on ${moment(lastContributed).format(DATE_FORMAT)}`}
+      />
+      <OverviewCard
+        title={
+          <ChartTitle
+            tooltipText={`This shows the percentage of pull requests ${currentUsername} has contributed to the overall project since ${firstPRDate} 2022.`}
+            title="Total PR contribution"
+          />
+        }
+        body={`${percentagePRs}%`}
+        caption={`since ${firstPRDate} 2022`}
       />
       <OverviewCard
         title={

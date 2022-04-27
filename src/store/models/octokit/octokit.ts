@@ -35,6 +35,7 @@ const PRDataModel = types.model("PRDataModel", {
   author: AuthorModel,
   additions: types.number,
   mergedAt: "",
+  createdAt: "",
   title: "",
   url: "",
 });
@@ -141,6 +142,7 @@ const OctokitStore = types
                 title
                 url
                 mergedAt
+                createdAt
                 author {
                   login
                   avatarUrl,
