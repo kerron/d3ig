@@ -8,7 +8,19 @@ export const ClosedPRs = () => {
 
   const OPTIONS_CLOSED_PRS = {
     responsive: true,
+    interaction: {
+      intersect: false,
+      mode: "nearest",
+    },
     plugins: {
+      tooltips: {
+        mode: "nearest",
+        intersect: false,
+      },
+      hover: {
+        mode: "nearest",
+        intersect: true,
+      },
       datalabels: {
         color: "#FFFFFF",
         formatter: () => {
@@ -36,7 +48,7 @@ export const ClosedPRs = () => {
       };
     }),
   };
-
+  // @ts-ignore: Unreachable code error
   return <Line options={OPTIONS_CLOSED_PRS} data={GRAPH_DATA_PR} />;
 };
 
