@@ -127,6 +127,7 @@ const OctokitStore = types
     userDataState: types.frozen<IUserData>(),
     currentUserState: types.optional(UserModel, () => UserModel.create()),
     currentUsernameState: types.optional(types.string, ""),
+    timeInCRState: types.optional(types.array(types.number), []),
   })
   .actions((self) => ({
     getHomeChartData: flow(function* () {
@@ -161,6 +162,7 @@ const OctokitStore = types
         root.octokitStore.getContributors();
         root.octokitStore.getRecentActivity();
         root.octokitStore.getUserData();
+        root.octokitStore.getAverageTimeInCR();
         self.isLoading = false;
         self.showHomeCharts = true;
         return;
@@ -170,6 +172,13 @@ const OctokitStore = types
         console.log(e);
       }
     }),
+    getAverageTimeInCR() {
+      const data = self.homeChartData.repository.pullRequests.nodes.map((v) =>
+        moment(v.mergedAt).diff(v.createdAt, "hours")
+      );
+      console.log(data);
+      self.timeInCRState = cast(data);
+    },
     getUserData() {
       const userObjByName =
         self.homeChartData.repository.pullRequests.nodes.reduce(
@@ -437,6 +446,12 @@ const OctokitStore = types
     },
     get inActiveMemebers(): TContributor[] {
       return self.inActiveMembersState;
+    },
+    get averageTimeInCR(): string {
+      if (!self.timeInCRState.length) return "";
+      const len = self.timeInCRState.length;
+      const time = Math.floor(self.timeInCRState.reduce((a, v) => a + v) / len);
+      return moment.duration(time, "hours").asDays().toFixed(1);
     },
   }));
 

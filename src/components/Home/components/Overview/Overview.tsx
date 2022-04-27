@@ -36,7 +36,13 @@ export const Productivity: React.FC<IProductivity> = observer(
 
 const Overview = () => {
   const {
-    octokitStore: { lastMerge, firstPRDate, totalLOC, totalPRs },
+    octokitStore: {
+      averageTimeInCR,
+      lastMerge,
+      firstPRDate,
+      totalLOC,
+      totalPRs,
+    },
   } = useStore();
 
   return (
@@ -60,6 +66,16 @@ const Overview = () => {
         }
         body={moment(lastMerge.mergedAt).fromNow()}
         caption={`by ${lastMerge.author.login}`}
+      />
+      <OverviewCard
+        title={
+          <ChartTitle
+            tooltipText={`This shows the average time it take the team to complete a code review.`}
+            title="Average time in code review"
+          />
+        }
+        body={`${averageTimeInCR} days`}
+        caption={`since ${firstPRDate} 2022`}
       />
       <OverviewCard
         title="Project lines of code"
