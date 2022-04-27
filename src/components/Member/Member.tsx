@@ -52,7 +52,7 @@ const Member = observer(() => {
       <Grid mb={3} container>
         <OverviewMember />
       </Grid>
-      <Grid justifyContent="space-between" spacing={2} container>
+      <Grid justifyContent="space-between" spacing={2} container mb={3}>
         <Grid item xs={12} sm={12}>
           <MainCard
             title={

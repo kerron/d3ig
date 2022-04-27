@@ -1,6 +1,5 @@
 import { Line } from "react-chartjs-2";
 import { USER_GRAPH_COLORS } from "../../constants/constants";
-import { getRandomColor } from "../../utils/graphs";
 
 export const MemberPRs = ({ labels, data, currentUser }) => {
   const OPTIONS_CLOSED_PRS = {

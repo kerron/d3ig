@@ -48,8 +48,8 @@ const LOC = () => {
           "#f3cda7",
           "#d7ad82",
         ],
-
-        borderWidth: 1,
+        borderWidth: 2,
+        hoverOffset: 4,
       },
     ],
   };
