@@ -1,6 +1,7 @@
 import { cast, flow, getParent, Instance, types } from "mobx-state-tree";
 import { createRequire } from "module";
 import moment from "moment";
+import { type } from "os";
 import { IRootStore } from "..";
 import {
   ACTIVE_MEMBERS,
@@ -150,6 +151,7 @@ const OctokitStore = types
     leaderboardState: types.optional(LeaderboardModel, () =>
       LeaderboardModel.create()
     ),
+    totalContributionsState: types.optional(types.number, 0),
   })
   .actions((self) => ({
     getHomeChartData: flow(function* () {
@@ -185,7 +187,6 @@ const OctokitStore = types
         root.octokitStore.getRecentActivity();
         root.octokitStore.getUserData();
         root.octokitStore.getAverageTimeInCR();
-        root.octokitStore.getLeaderboard();
         self.isLoading = false;
         self.showHomeCharts = true;
         return;
@@ -380,23 +381,26 @@ const OctokitStore = types
     getLeaderboard: flow(function* () {
       const root: IRootStore = getParent(self);
       if (!root.authStore.hasInstance) return;
+
       try {
         const resp = yield root.authStore.restWithAuth.request(
           "GET /repos/esure-cloud/fe-react-app-integrated-eclaim/contributors"
         );
-        const leaders = resp.data
-          .map((c) => ({
+        const leaders: TContributor[] = resp.data
+          .map((c: TContributor) => ({
             login: c.login,
             contributions: c.contributions,
           }))
-          .filter((v) => ACTIVE_MEMBERS[v.login])
+          .filter((v: TContributor) => ACTIVE_MEMBERS[v.login])
           .sort(
             (a: TContributor, b: TContributor) =>
               b.contributions - a.contributions
           );
+
         const labels = leaders.map((v) => v.login);
+
         const datasets: TDatasets[] = [
-          leaders.reduce(
+          leaders.reduce<TDatasets>(
             (prev, curr) => ({
               label: "",
               data: [...prev.data, curr.contributions],
@@ -413,8 +417,12 @@ const OctokitStore = types
             }
           ),
         ];
-        //    at path "/datasets/0/data/0" snapshot `{"login":"kerron","contributions":185}` is not assignable to type: `number`
         self.leaderboardState = cast({ labels, datasets });
+        const totalContributions: number = leaders.reduce(
+          (a, v) => a + v.contributions,
+          0
+        );
+        self.totalContributionsState = totalContributions;
       } catch (error) {
         console.log(error);
       }
@@ -519,6 +527,9 @@ const OctokitStore = types
     },
     get leaderboard(): TLeaderboard {
       return self.leaderboardState;
+    },
+    get totalContributions(): number {
+      return self.totalContributionsState;
     },
   }));
 

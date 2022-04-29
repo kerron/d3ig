@@ -2,6 +2,7 @@ import React from "react";
 import { Pie } from "react-chartjs-2";
 import { useStore } from "../../hooks/useStore";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import { GRAPH_COLORS } from "../../constants/constants";
 
 export const OPTIONS_LOC = {
   responsive: true,
@@ -38,16 +39,7 @@ const LOC = () => {
       {
         label: "Lines of code",
         data: locData.data,
-        backgroundColor: [
-          "#b3c5bf",
-          "#8387c8",
-          "#adf2c4",
-          "#eb9fdd",
-          "#e38082",
-          "#91c4e0",
-          "#f3cda7",
-          "#d7ad82",
-        ],
+        backgroundColor: GRAPH_COLORS,
         borderWidth: 2,
         hoverOffset: 4,
       },
