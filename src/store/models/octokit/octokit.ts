@@ -1,12 +1,20 @@
 import { cast, flow, getParent, Instance, types } from "mobx-state-tree";
+import { createRequire } from "module";
 import moment from "moment";
 import { IRootStore } from "..";
 import {
   ACTIVE_MEMBERS,
   DATE_FORMAT_SHORT,
+  DEFAULT_USER_GRAPH_COLOR,
+  USER_GRAPH_COLORS,
 } from "../../../constants/constants";
 import { getRandomColor } from "../../../utils/graphs";
-import { IUserData, TContributor } from "../../../utils/types";
+import {
+  IUserData,
+  TContributor,
+  TDatasets,
+  TLeaderboard,
+} from "../../../utils/types";
 
 interface IChartDataLOC {
   labels: string[];
@@ -103,6 +111,17 @@ const UserModel = types.model("UserModel", {
   totalPrs: types.optional(types.number, 0),
 });
 
+const LeaderboardGraphDatasets = types.model("LeaderboardGraphDatasets", {
+  label: types.optional(types.string, ""),
+  data: types.optional(types.array(types.number), []),
+  backgroundColor: types.optional(types.array(types.string), []),
+});
+
+const LeaderboardModel = types.model("LeaderboardModel", {
+  labels: types.array(types.string),
+  datasets: types.optional(types.array(LeaderboardGraphDatasets), []),
+});
+
 const OctokitStore = types
   .model("OctokitStore", {
     homeChartData: types.optional(RepositoryModel, () =>
@@ -128,6 +147,9 @@ const OctokitStore = types
     currentUserState: types.optional(UserModel, () => UserModel.create()),
     currentUsernameState: types.optional(types.string, ""),
     timeInCRState: types.optional(types.array(types.number), []),
+    leaderboardState: types.optional(LeaderboardModel, () =>
+      LeaderboardModel.create()
+    ),
   })
   .actions((self) => ({
     getHomeChartData: flow(function* () {
@@ -163,6 +185,7 @@ const OctokitStore = types
         root.octokitStore.getRecentActivity();
         root.octokitStore.getUserData();
         root.octokitStore.getAverageTimeInCR();
+        root.octokitStore.getLeaderboard();
         self.isLoading = false;
         self.showHomeCharts = true;
         return;
@@ -176,7 +199,6 @@ const OctokitStore = types
       const data = self.homeChartData.repository.pullRequests.nodes.map((v) =>
         moment(v.mergedAt).diff(v.createdAt, "hours")
       );
-      console.log(data);
       self.timeInCRState = cast(data);
     },
     getUserData() {
@@ -355,6 +377,48 @@ const OctokitStore = types
         console.log(error);
       }
     }),
+    getLeaderboard: flow(function* () {
+      const root: IRootStore = getParent(self);
+      if (!root.authStore.hasInstance) return;
+      try {
+        const resp = yield root.authStore.restWithAuth.request(
+          "GET /repos/esure-cloud/fe-react-app-integrated-eclaim/contributors"
+        );
+        const leaders = resp.data
+          .map((c) => ({
+            login: c.login,
+            contributions: c.contributions,
+          }))
+          .filter((v) => ACTIVE_MEMBERS[v.login])
+          .sort(
+            (a: TContributor, b: TContributor) =>
+              b.contributions - a.contributions
+          );
+        const labels = leaders.map((v) => v.login);
+        const datasets: TDatasets[] = [
+          leaders.reduce(
+            (prev, curr) => ({
+              label: "",
+              data: [...prev.data, curr.contributions],
+              backgroundColor: [
+                ...prev.backgroundColor,
+                USER_GRAPH_COLORS[curr.login]?.[0] ||
+                  DEFAULT_USER_GRAPH_COLOR[0],
+              ],
+            }),
+            {
+              label: "",
+              data: [],
+              backgroundColor: [],
+            }
+          ),
+        ];
+        //    at path "/datasets/0/data/0" snapshot `{"login":"kerron","contributions":185}` is not assignable to type: `number`
+        self.leaderboardState = cast({ labels, datasets });
+      } catch (error) {
+        console.log(error);
+      }
+    }),
     getRecentActivity: flow(function* () {
       const root: IRootStore = getParent(self);
       if (!root.authStore.hasInstance) return;
@@ -452,6 +516,9 @@ const OctokitStore = types
       const len = self.timeInCRState.length;
       const time = Math.floor(self.timeInCRState.reduce((a, v) => a + v) / len);
       return moment.duration(time, "hours").asDays().toFixed(1);
+    },
+    get leaderboard(): TLeaderboard {
+      return self.leaderboardState;
     },
   }));
 

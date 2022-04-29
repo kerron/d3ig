@@ -11,6 +11,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from "@mui/icons-material/Home";
 import Avatar from "@mui/material/Avatar";
+import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
@@ -67,6 +68,17 @@ const SideBar = observer(() => {
               <HomeIcon />
             </ListItemIcon>
             <ListItemText primary="Home" />
+          </ListItem>
+        </Link>
+        <Link
+          to="/leaderboard"
+          style={{ textDecoration: "none", color: "#000" }}
+        >
+          <ListItem button>
+            <ListItemIcon>
+              <LeaderboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="Leaderboard" />
           </ListItem>
         </Link>
       </List>

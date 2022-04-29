@@ -38,3 +38,8 @@ export const USER_GRAPH_COLORS = {
   AlexandruLoghin2: ["rgb(227, 128, 130)", "rgba(227, 128, 130, 0.5)"],
   bratciprian: ["rgb(215, 173, 130)", "rgba(215, 173, 130, 0.5)"],
 };
+
+export const DEFAULT_USER_GRAPH_COLOR = [
+  "rgb(53, 162, 235)",
+  "rgba(53, 162, 235, 0.5)",
+];

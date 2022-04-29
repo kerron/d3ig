@@ -10,6 +10,8 @@ import SideBar from "./components/SideBar/SideBar";
 import { DrawerHeader, Main } from "./styled";
 import { Routes, Route } from "react-router-dom";
 import Member from "../Member/Member";
+import Leaderboard from "../Leaderboard/Leaderboard";
+
 const Home = observer(() => {
   const {
     uiStore: { getDrawerState },
@@ -22,10 +24,10 @@ const Home = observer(() => {
       <SideBar />
       <Main open={getDrawerState()}>
         <DrawerHeader />
-
         <Grid container>
           <Routes>
             <Route path="/" element={<MainGraphs />} />
+            <Route path="leaderboard" element={<Leaderboard />} />
             <Route path="user/:username" element={<Member />} />
             <Route path="*" element={<MainGraphs />} />
           </Routes>

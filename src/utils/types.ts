@@ -40,3 +40,14 @@ export interface IUserData {
   loc: number;
   totalPrs: number;
 }
+
+export type TDatasets = {
+  label: string;
+  data: number[];
+  backgroundColor: string[];
+};
+
+export type TLeaderboard = {
+  labels: string[];
+  datasets: TDatasets[];
+};
