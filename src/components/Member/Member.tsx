@@ -57,7 +57,7 @@ const Member = observer(() => {
           <MainCard
             title={
               <ChartTitle
-                tooltipText={``}
+                tooltipText={`This shows the number of pull requests ${username} has completed on each day since ${firstPRDate} 2022.`}
                 title={`${username}'s contributions`}
               />
             }

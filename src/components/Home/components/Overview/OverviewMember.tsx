@@ -86,7 +86,7 @@ const OverviewMember = () => {
       <OverviewCard
         title={
           <ChartTitle
-            tooltipText={`This shows the percentage of code ${currentUsername} has contributed to the overall project since ${firstPRDate} 2022.`}
+            tooltipText={`This shows the percentage of the code ${currentUsername} has contributed to the overall project since ${firstPRDate} 2022.`}
             title="Total code contribution"
           />
         }

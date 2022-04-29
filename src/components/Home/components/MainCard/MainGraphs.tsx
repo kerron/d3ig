@@ -20,7 +20,7 @@ const MainGraphs = () => {
           <MainCard
             title={
               <ChartTitle
-                tooltipText={`Shows the number of pull requests (tasks) completed by each team member since ${firstPRDate}. You can filter by clicking on a contributor's name.`}
+                tooltipText={`This shows the number of pull requests (tasks) completed by each team member since ${firstPRDate}. You can filter by clicking on a contributor's name.`}
                 title="Team Members' Activity"
               />
             }
@@ -31,7 +31,7 @@ const MainGraphs = () => {
           <MainCard
             title={
               <ChartTitle
-                tooltipText={`Shows the total lines of code contributed by each team member since ${firstPRDate}. You can filter by clicking on a contributor's name.`}
+                tooltipText={`This shows the total lines of code contributed by each team member since ${firstPRDate}. You can filter by clicking on a contributor's name.`}
                 title="Code Contribution"
               />
             }
