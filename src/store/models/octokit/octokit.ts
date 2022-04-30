@@ -402,7 +402,7 @@ const OctokitStore = types
         const datasets: TDatasets[] = [
           leaders.reduce<TDatasets>(
             (prev, curr) => ({
-              label: "",
+              label: "contributions",
               data: [...prev.data, curr.contributions],
               backgroundColor: [
                 ...prev.backgroundColor,

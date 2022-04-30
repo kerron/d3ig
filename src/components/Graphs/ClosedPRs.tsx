@@ -5,17 +5,28 @@ import { useStore } from "../../hooks/useStore";
 export const ClosedPRs = () => {
   const { octokitStore } = useStore();
   const { prsData } = octokitStore;
-
   const OPTIONS_CLOSED_PRS = {
     responsive: true,
+    hitRadius: 20,
+    hoverRadius: 8,
+
     interaction: {
       intersect: false,
       mode: "nearest",
     },
     plugins: {
-      tooltips: {
+      tooltip: {
         mode: "nearest",
         intersect: false,
+        callbacks: {
+          label: function (context) {
+            let label = context.dataset.label || "";
+            if (label) {
+              label += `: ${context.raw} PR${context.raw > 1 ? "s" : ""}`;
+            }
+            return label;
+          },
+        },
       },
       hover: {
         mode: "nearest",

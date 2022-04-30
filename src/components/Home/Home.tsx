@@ -24,7 +24,7 @@ const Home = observer(() => {
       <SideBar />
       <Main open={getDrawerState()}>
         <DrawerHeader />
-        <Grid container>
+        <Grid container pb={3}>
           <Routes>
             <Route path="/" element={<MainGraphs />} />
             <Route path="leaderboard" element={<Leaderboard />} />

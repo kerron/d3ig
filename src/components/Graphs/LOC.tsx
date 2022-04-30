@@ -25,7 +25,11 @@ export const OPTIONS_LOC = {
       animateRotate: true,
     },
     tooltip: {
-      callbacks: {},
+      callbacks: {
+        label: function (context) {
+          return `${context.label}: ${context.formattedValue} lines of code`;
+        },
+      },
     },
   },
 };

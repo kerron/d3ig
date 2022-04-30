@@ -7,9 +7,21 @@ import { useEffect } from "react";
 import MainCard from "../Home/components/MainCard/MainCard";
 import ChartTitle from "../ChartTitle/ChartTitle";
 import OverviewLeaderboard from "../Home/components/Overview/OverviewLeaderboard";
+let delayed;
 const options = {
   indexAxis: "y" as const,
-
+  animation: {
+    onComplete: () => {
+      delayed = true;
+    },
+    delay: (context) => {
+      let delay = 0;
+      if (context.type === "data" && context.mode === "default" && !delayed) {
+        delay = context.dataIndex * 300 + context.datasetIndex * 100;
+      }
+      return delay;
+    },
+  },
   responsive: true,
   plugins: {
     datalabels: {
