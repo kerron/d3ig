@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { DATE_FORMAT_DAY, getChartRange } from "../../constants/constants";
+import { DATE_FORMAT_DAY } from "../../constants/constants";
 import { useStore } from "../../hooks/useStore";
 import ChartTitle from "../ChartTitle/ChartTitle";
 import MemberPRs from "../Graphs/MemberPRs";
@@ -58,7 +58,7 @@ const Member = observer(() => {
             title={
               <ChartTitle
                 tooltipText={`This shows the number of pull requests ${username} has completed on each day since ${firstPRDate} 2022.`}
-                title={`${username}'s contributions`}
+                title={`${username}'s pull requests`}
               />
             }
             graph={
