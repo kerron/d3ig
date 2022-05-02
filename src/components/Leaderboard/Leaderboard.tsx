@@ -2,26 +2,12 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "../../hooks/useStore";
 import { Bar } from "react-chartjs-2";
 import { Grid } from "@mui/material";
-import OverviewMember from "../Home/components/Overview/OverviewMember";
 import { useEffect } from "react";
 import MainCard from "../Home/components/MainCard/MainCard";
 import ChartTitle from "../ChartTitle/ChartTitle";
 import OverviewLeaderboard from "../Home/components/Overview/OverviewLeaderboard";
-let delayed;
 const options = {
   indexAxis: "y" as const,
-  animation: {
-    onComplete: () => {
-      delayed = true;
-    },
-    delay: (context) => {
-      let delay = 0;
-      if (context.type === "data" && context.mode === "default" && !delayed) {
-        delay = context.dataIndex * 300 + context.datasetIndex * 100;
-      }
-      return delay;
-    },
-  },
   responsive: true,
   plugins: {
     datalabels: {
