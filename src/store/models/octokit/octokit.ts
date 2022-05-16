@@ -184,7 +184,6 @@ const OctokitStore = types
         root.octokitStore.getChartPR();
         root.octokitStore.getChartLOC();
         root.octokitStore.getContributors();
-        root.octokitStore.getRecentActivity();
         root.octokitStore.getUserData();
         root.octokitStore.getAverageTimeInCR();
         self.isLoading = false;
@@ -423,19 +422,6 @@ const OctokitStore = types
           0
         );
         self.totalContributionsState = totalContributions;
-      } catch (error) {
-        console.log(error);
-      }
-    }),
-    getRecentActivity: flow(function* () {
-      const root: IRootStore = getParent(self);
-      if (!root.authStore.hasInstance) return;
-      try {
-        const resp = yield root.authStore.restWithAuth.request(
-          "GET /repos/esure-cloud/fe-react-app-integrated-eclaim/stats/participation"
-        );
-        const lastThreeMonths: number[] = resp.data.all.slice(40);
-        self.weeklyActivity = cast([1, 2]);
       } catch (error) {
         console.log(error);
       }
