@@ -1,7 +1,7 @@
 import moment from "moment";
 
 export const DATE_FORMAT = "DD MMM yy";
-export const DATE_FORMAT_SHORT = "DD MMM";
+export const DATE_FORMAT_SHORT = "DD MMM YY";
 export const DATE_FORMAT_DAY = "dd DD MMM";
 export const ACTIVE_MEMBERS = {
   kerron: true,

@@ -51,3 +51,9 @@ export type TLeaderboard = {
   labels: string[];
   datasets: TDatasets[];
 };
+
+export type TContributionsByContributor = {
+  [key: string]: { [key: string]: number };
+};
+
+export type TContributionsOnDate = { [key: string]: number[] };

@@ -3,6 +3,7 @@ import { Pie } from "react-chartjs-2";
 import { useStore } from "../../hooks/useStore";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { GRAPH_COLORS } from "../../constants/constants";
+import { observer } from "mobx-react-lite";
 
 export const OPTIONS_LOC = {
   responsive: true,
@@ -34,7 +35,7 @@ export const OPTIONS_LOC = {
   },
 };
 
-const LOC = () => {
+const LOC: React.FC = observer(() => {
   const { octokitStore } = useStore();
   const { locData } = octokitStore;
   const GRAPH_DATA_LOC = {
@@ -49,6 +50,7 @@ const LOC = () => {
       },
     ],
   };
+
   return (
     <Pie
       options={OPTIONS_LOC}
@@ -56,6 +58,6 @@ const LOC = () => {
       plugins={[ChartDataLabels]}
     />
   );
-};
+});
 
 export default LOC;

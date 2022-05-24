@@ -1,8 +1,9 @@
+import { observer } from "mobx-react-lite";
 import { Line } from "react-chartjs-2";
 import { GRAPH_COLORS } from "../../constants/constants";
 import { useStore } from "../../hooks/useStore";
 
-export const ClosedPRs = () => {
+export const ClosedPRs: React.FC = observer(() => {
   const { octokitStore } = useStore();
   const { prsData } = octokitStore;
   const OPTIONS_CLOSED_PRS = {
@@ -61,6 +62,6 @@ export const ClosedPRs = () => {
   };
   // @ts-ignore: Unreachable code error
   return <Line options={OPTIONS_CLOSED_PRS} data={GRAPH_DATA_PR} />;
-};
+});
 
 export default ClosedPRs;
