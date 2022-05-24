@@ -10,7 +10,6 @@ import { DrawerHeader, Main } from "./styled";
 import { Routes, Route } from "react-router-dom";
 import Member from "../Member/Member";
 import Leaderboard from "../Leaderboard/Leaderboard";
-import { useEffect } from "react";
 import Spinner from "../Spinner/Spinner";
 
 const Home = observer(() => {
@@ -18,16 +17,8 @@ const Home = observer(() => {
     uiStore: { getDrawerState },
   } = useStore();
   const {
-    authStore,
     octokitStore: { isLoading },
   } = useStore();
-  const { getAuth } = authStore;
-
-  useEffect(() => {
-    if (!authStore.hasInstance) {
-      getAuth();
-    }
-  }, [authStore, getAuth]);
 
   return (
     <>

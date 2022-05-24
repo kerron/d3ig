@@ -74,7 +74,7 @@ const MainSearch: React.FC = observer(() => {
       <form onSubmit={onSubmit}>
         <TextField
           id="outlined-basic"
-          label="Enter a public repository"
+          label="Enter a public Github repository"
           variant="outlined"
           value={value}
           onChange={(e) => onChange(e)}

@@ -1,3 +1,4 @@
+import { toJS } from "mobx";
 import { cast, flow, getParent, Instance, types } from "mobx-state-tree";
 import moment from "moment";
 import { IRootStore } from "..";
@@ -155,11 +156,15 @@ const OctokitStore = types
       LeaderboardModel.create()
     ),
     totalContributionsState: types.optional(types.number, 0),
+    repoNameState: "",
+    repoOwnerState: "",
+    recentContributors: types.map(types.number),
   })
   .actions((self) => ({
     getRepo: flow(function* ({ owner, name }) {
       try {
         const root: IRootStore = getParent(self);
+        root.authStore.getAuth();
         const resp = yield root.authStore.graphqlWithAuth(`
         {
           repository(name: "${name}", owner: "${owner}") {
@@ -181,10 +186,15 @@ const OctokitStore = types
           }
         }
         `);
-        root.uiStore.setHasData(true);
         self.mergedPRsData = resp;
+        self.repoNameState = name;
+        self.repoOwnerState = owner;
+        root.uiStore.setHasData(true);
         root.octokitStore.getMergedPrs();
         root.octokitStore.getChartLOC();
+        root.octokitStore.getAverageTimeInCR();
+        root.octokitStore.getContributors();
+        root.octokitStore.getUserData();
         return;
       } catch (e) {
         const root: IRootStore = getParent(self);
@@ -276,6 +286,8 @@ const OctokitStore = types
 
       self.daysWithPR = cast(labels);
       self.prsData = cast(chartData);
+      self.isLoading = false;
+      self.recentContributors = cast(contributorsObj);
     },
     getHomeChartData: flow(function* () {
       try {
@@ -307,9 +319,9 @@ const OctokitStore = types
         root.octokitStore.getChartPR();
         root.octokitStore.getChartLOC();
         root.octokitStore.getContributors();
-        // root.octokitStore.getRecentActivity();
-        root.octokitStore.getUserData();
+        // root.octokitStore.getUserData();
         root.octokitStore.getAverageTimeInCR();
+        // root.octokitStore.getRecentActivity();
         self.isLoading = false;
         self.showHomeCharts = true;
         return;
@@ -320,14 +332,14 @@ const OctokitStore = types
       }
     }),
     getAverageTimeInCR() {
-      const data = self.homeChartData.repository.pullRequests.nodes.map((v) =>
+      const data = self.mergedPRsData.repository.pullRequests.nodes.map((v) =>
         moment(v.mergedAt).diff(v.createdAt, "hours")
       );
       self.timeInCRState = cast(data);
     },
     getUserData() {
       const userObjByName =
-        self.homeChartData.repository.pullRequests.nodes.reduce(
+        self.mergedPRsData.repository.pullRequests.nodes.reduce(
           (prev, curr) => ({
             ...prev,
             [curr.author.login]: {
@@ -358,7 +370,10 @@ const OctokitStore = types
           }),
           {}
         ) as IUserData;
-
+      console.log({
+        d: toJS(self.mergedPRsData.repository.pullRequests.nodes),
+      });
+      console.log({ userObjByName });
       self.userDataState = userObjByName;
     },
     getChartLOC() {
@@ -383,7 +398,7 @@ const OctokitStore = types
     },
     getChartPR() {
       const formattedObj =
-        self.homeChartData.repository.pullRequests.nodes.reduce(
+        self.mergedPRsData.repository.pullRequests.nodes.reduce(
           (prev, curr) => {
             const key = curr.mergedAt.split("T")[0];
             const author = curr.author.login;
@@ -458,9 +473,12 @@ const OctokitStore = types
       if (!root.authStore.hasInstance) return;
       try {
         const resp = yield root.authStore.restWithAuth.request(
-          "GET /repos/esure-cloud/fe-react-app-integrated-eclaim/contributors"
+          `GET /repos/${self.repoOwnerState}/${self.repoNameState}/contributors`
         );
+        console.log({ rec: toJS(self.recentContributors) });
+        console.log({ rec2: resp.data });
         const contributors = resp.data
+          .filter((c) => self.recentContributors.has(c.login))
           .map((c) => ({
             login: c.login,
             avatarURL: c.avatar_url,
@@ -472,12 +490,12 @@ const OctokitStore = types
             (a: TContributor, b: TContributor) =>
               b.contributions - a.contributions
           );
-        self.activeMembersState = contributors.filter(
-          (v) => ACTIVE_MEMBERS[v.login]
-        );
-        self.inActiveMembersState = contributors.filter(
-          (v) => !ACTIVE_MEMBERS[v.login]
-        );
+
+        console.log({ contributors });
+        self.activeMembersState = contributors;
+        // self.inActiveMembersState = contributors.filter(
+        //   (v) => !ACTIVE_MEMBERS[v.login]
+        // );
         const labels = contributors.map((c: TContributor) => c.login);
         const data = contributors.map((c: TContributor) => c.contributions);
         const backgroundColor = contributors.map((c: TContributor) =>
@@ -592,7 +610,7 @@ const OctokitStore = types
       return self.weeklyActivity[len - 2];
     },
     get totalPRs(): number {
-      return self.homeChartData.repository.pullRequests.totalCount;
+      return self.mergedPRsData.repository.pullRequests.totalCount;
     },
     get firstPRDate(): string {
       return self.daysWithPR.at(0) || "";
@@ -607,7 +625,7 @@ const OctokitStore = types
       };
       mergedAt: string;
     } {
-      const len = self.homeChartData.repository.pullRequests.nodes.length;
+      const len = self.mergedPRsData.repository.pullRequests.nodes.length;
       if (!len)
         return {
           author: {
@@ -619,7 +637,7 @@ const OctokitStore = types
       const {
         mergedAt,
         author: { login, avatarUrl },
-      } = self.homeChartData.repository.pullRequests.nodes[len - 1];
+      } = self.mergedPRsData.repository.pullRequests.nodes[len - 1];
       return {
         mergedAt,
         author: {
@@ -651,6 +669,9 @@ const OctokitStore = types
     },
     get totalContributions(): number {
       return self.totalContributionsState;
+    },
+    get repoName(): string {
+      return self.repoOwnerState + "/" + self.repoNameState;
     },
   }));
 

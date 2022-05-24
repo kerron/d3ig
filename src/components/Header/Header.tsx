@@ -35,6 +35,7 @@ const AppBar = styled(MuiAppBar, {
 const Header = observer(() => {
   const {
     uiStore: { getDrawerState, setDrawerState },
+    octokitStore: { repoName },
   } = useStore();
 
   return (
@@ -77,7 +78,7 @@ const Header = observer(() => {
               color: "#2a2e3a",
             }}
           >
-            Digital Claims Integrated App
+            {repoName}
           </Typography>
           <Contributors />
         </Box>

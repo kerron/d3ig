@@ -1,13 +1,13 @@
 import { observer } from "mobx-react-lite";
 import MainSearch from "../Search/MainSearch";
 import { useStore } from "../../hooks/useStore";
-import LOC from "../Graphs/LOC";
+import Home from "../Home/Home";
 
 const Entry: React.FC = observer(() => {
   const {
     uiStore: { hasData },
   } = useStore();
-  return <>{!hasData ? <MainSearch /> : <LOC />}</>;
+  return <>{!hasData ? <MainSearch /> : <Home />}</>;
 });
 
 export default Entry;

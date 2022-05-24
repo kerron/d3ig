@@ -1,5 +1,4 @@
 import { Line } from "react-chartjs-2";
-import { USER_GRAPH_COLORS } from "../../constants/constants";
 
 export const MemberPRs = ({ labels, data, currentUser }) => {
   const OPTIONS_CLOSED_PRS = {
@@ -26,8 +25,8 @@ export const MemberPRs = ({ labels, data, currentUser }) => {
     datasets: [
       {
         data,
-        backgroundColor: USER_GRAPH_COLORS[currentUser][0],
-        borderColor: USER_GRAPH_COLORS[currentUser][1],
+        backgroundColor: "rgb(131, 135, 200)",
+        borderColor: "rgba(131, 135, 200, 0.5)",
         pointRadius: 5,
         tension: 0.2,
       },

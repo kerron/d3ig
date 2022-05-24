@@ -32,10 +32,9 @@ const AuthStore = types
           },
         });
         self.restWithAuth = instance;
-
         self.hasInstance = true;
-        const root: IRootStore = getParent(self);
-        root.octokitStore.getHomeChartData();
+        // const root: IRootStore = getParent(self);
+        // root.octokitStore.getHomeChartData();
         localStorage.setItem(IS_AUTH, "1");
       } catch (e) {
         self.hasInstance = false;

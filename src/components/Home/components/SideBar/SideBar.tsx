@@ -84,7 +84,7 @@ const SideBar = observer(() => {
       </List>
       <Divider />
       <Typography sx={{ fontWeight: 600, paddingLeft: 2, paddingTop: 1 }}>
-        Current Team
+        Recent Contributors
       </Typography>
       <List>
         {activeMemebers.length ? (
