@@ -1,7 +1,5 @@
 import { cast, flow, getParent, Instance, types } from "mobx-state-tree";
-import { createRequire } from "module";
 import moment from "moment";
-import { type } from "os";
 import { IRootStore } from "..";
 import {
   ACTIVE_MEMBERS,
@@ -12,9 +10,11 @@ import {
 import { getRandomColor } from "../../../utils/graphs";
 import {
   IUserData,
+  TContributionsByContributor,
   TContributor,
   TDatasets,
   TLeaderboard,
+  TContributionsOnDate,
 } from "../../../utils/types";
 
 interface IChartDataLOC {
@@ -128,6 +128,9 @@ const OctokitStore = types
     homeChartData: types.optional(RepositoryModel, () =>
       RepositoryModel.create()
     ),
+    mergedPRsData: types.optional(RepositoryModel, () =>
+      RepositoryModel.create()
+    ),
     locData: types.optional(LOCDataModel, () => LOCDataModel.create()),
     prsData: types.optional(PrsDataModel, () => PrsDataModel.create({})),
     isLoading: false,
@@ -154,6 +157,126 @@ const OctokitStore = types
     totalContributionsState: types.optional(types.number, 0),
   })
   .actions((self) => ({
+    getRepo: flow(function* ({ owner, name }) {
+      try {
+        const root: IRootStore = getParent(self);
+        const resp = yield root.authStore.graphqlWithAuth(`
+        {
+          repository(name: "${name}", owner: "${owner}") {
+            pullRequests(last: 100, states: MERGED) {
+              nodes {
+                additions
+                title
+                url
+                mergedAt
+                createdAt
+                author {
+                  login
+                  avatarUrl,
+                  url
+                }
+              }
+              totalCount
+            }
+          }
+        }
+        `);
+        root.uiStore.setHasData(true);
+        self.mergedPRsData = resp;
+        root.octokitStore.getMergedPrs();
+        root.octokitStore.getChartLOC();
+        return;
+      } catch (e) {
+        const root: IRootStore = getParent(self);
+        root.uiStore.setHasData(false);
+        console.log({ e });
+        return;
+      }
+    }),
+    getMergedPrs() {
+      const datesKeyObj =
+        self.mergedPRsData.repository.pullRequests.nodes.reduce(
+          (prev, curr) => {
+            const key = curr.mergedAt.split("T")[0];
+            const author = curr.author.login;
+
+            return {
+              ...prev,
+              [key]: {
+                ...prev[key],
+                [author]: 1 + (prev[key]?.[author] || 0),
+              },
+            };
+          },
+          {}
+        );
+      const contributorsObj =
+        self.mergedPRsData.repository.pullRequests.nodes.reduce(
+          (prev, curr) => ({
+            ...prev,
+            [curr.author.login]: 0,
+          }),
+          {}
+        );
+      const contributorsArr =
+        self.mergedPRsData.repository.pullRequests.nodes.reduce(
+          (prev, curr) => ({
+            ...prev,
+            [curr.author.login]: [],
+          }),
+          {}
+        );
+
+      let contributionsByContributor: TContributionsByContributor = {};
+
+      for (const dateKey in datesKeyObj) {
+        contributionsByContributor[dateKey] = {
+          ...contributorsObj,
+          ...datesKeyObj[dateKey],
+        };
+      }
+
+      const contributionsOnDate: TContributionsOnDate = Object.values(
+        contributionsByContributor
+      ).reduce(
+        (prev: TContributionsOnDate, curr) => {
+          const datesKeys = Object.keys(curr);
+          const result = {};
+
+          for (const dateKey of datesKeys) {
+            const prevArr =
+              Symbol.iterator in Object(prev[dateKey]) ? prev[dateKey] : [];
+            result[dateKey] = [...prevArr, curr[dateKey]];
+          }
+
+          return result;
+        },
+        {
+          ...contributorsArr,
+        }
+      );
+
+      const datasets: IChartLineData[] = [];
+
+      for (const date in contributionsOnDate) {
+        datasets.push({
+          label: date,
+          data: contributionsOnDate[date],
+        });
+      }
+
+      const labels = Object.keys(datesKeyObj).map((v) =>
+        moment(new Date(v)).format(DATE_FORMAT_SHORT)
+      );
+
+      const chartData: IChartDataPRS = {
+        labels,
+        datasets,
+      };
+
+      self.daysWithPR = cast(labels);
+      self.prsData = cast(chartData);
+    },
     getHomeChartData: flow(function* () {
       try {
         self.isLoading = true;
@@ -184,7 +307,7 @@ const OctokitStore = types
         root.octokitStore.getChartPR();
         root.octokitStore.getChartLOC();
         root.octokitStore.getContributors();
-        root.octokitStore.getRecentActivity();
+        // root.octokitStore.getRecentActivity();
         root.octokitStore.getUserData();
         root.octokitStore.getAverageTimeInCR();
         self.isLoading = false;
@@ -239,8 +362,8 @@ const OctokitStore = types
       self.userDataState = userObjByName;
     },
     getChartLOC() {
-      const formattedObj =
-        self.homeChartData.repository.pullRequests.nodes.reduce(
+      const datesKeyObj =
+        self.mergedPRsData.repository.pullRequests.nodes.reduce(
           (prev, curr) => ({
             ...prev,
             [curr.author.login]:
@@ -248,9 +371,8 @@ const OctokitStore = types
           }),
           {}
         );
-      const labels = Object.keys(formattedObj);
-      const data: number[] = Object.values(formattedObj);
-
+      const labels = Object.keys(datesKeyObj);
+      const data: number[] = Object.values(datesKeyObj);
       const chartData: IChartDataLOC = {
         labels,
         data,
@@ -427,19 +549,18 @@ const OctokitStore = types
         console.log(error);
       }
     }),
-    getRecentActivity: flow(function* () {
-      const root: IRootStore = getParent(self);
-      if (!root.authStore.hasInstance) return;
-      try {
-        const resp = yield root.authStore.restWithAuth.request(
-          "GET /repos/esure-cloud/fe-react-app-integrated-eclaim/stats/participation"
-        );
-        const lastThreeMonths: number[] = resp.data.all.slice(40);
-        self.weeklyActivity = cast([1, 2]);
-      } catch (error) {
-        console.log(error);
-      }
-    }),
+    // getRecentActivity: flow(function* () {
+    //   const root: IRootStore = getParent(self);
+    //   if (!root.authStore.hasInstance) return;
+    //   try {
+    //     const resp = yield root.authStore.restWithAuth.request(
+    //       "GET /repos/esure-cloud/fe-react-app-integrated-eclaim/stats/participation"
+    //     );
+    //     self.weeklyActivity = cast([1, 2]);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // }),
     setCurrentUser(username: string) {
       if (!username) return;
       self.currentUsernameState = username;
