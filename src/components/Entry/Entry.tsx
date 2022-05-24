@@ -1,5 +1,5 @@
 import {
-  Button,
+  Avatar,
   Container,
   Divider,
   InputAdornment,
@@ -11,10 +11,12 @@ import {
   Paper,
 } from "@mui/material";
 import TextField from "@mui/material/TextField";
-import InboxIcon from "@mui/icons-material/Inbox";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
-import { padding } from "@mui/system";
 import { useState } from "react";
+import Logo from "../../assets/logo.svg";
+import { Box } from "@mui/system";
+// const blue = "#1f74cf";
+const gray = { dark: "#0000008a", light: "#f9f7f7" };
 
 const Entry = () => {
   const [value, setValue] = useState("");
@@ -35,6 +37,9 @@ const Entry = () => {
         flexDirection: "column",
       }}
     >
+      <Box sx={{ alignSelf: "center", marginBottom: 6 }}>
+        <img src={Logo} alt="logo" width={180} />
+      </Box>
       <TextField
         id="outlined-basic"
         label="Enter a public repository"
@@ -45,7 +50,7 @@ const Entry = () => {
         sx={{
           backgroundColor: "white",
           input: {
-            color: "#0000008a",
+            color: gray.dark,
           },
         }}
         inputProps={{
@@ -58,13 +63,13 @@ const Entry = () => {
                 <Paper
                   elevation={1}
                   sx={{
-                    bgcolor: "#f9f7f7",
+                    bgcolor: gray.light,
                     padding: 1,
                     display: "flex",
                     cursor: "pointer",
                   }}
                 >
-                  <KeyboardReturnIcon sx={{ color: "#0000008a" }} />
+                  <KeyboardReturnIcon sx={{ color: gray.dark }} />
                 </Paper>
               ) : null}
             </InputAdornment>
@@ -72,7 +77,7 @@ const Entry = () => {
         }}
         fullWidth
       />
-      <Paper elevation={1} sx={{ bgcolor: "#f9f7f7" }}>
+      <Paper elevation={1} sx={{ bgcolor: gray.light }}>
         <List>
           <ListItem
             secondaryAction={
@@ -84,9 +89,40 @@ const Entry = () => {
             disablePadding
           >
             <ListItemButton>
+              <ListItemIcon>
+                <Avatar
+                  alt="Travis Howard"
+                  src="https://avatars.githubusercontent.com/u/587058?v=4"
+                />
+              </ListItemIcon>
               <ListItemText
                 primary="https://github.com/kerron/d3ig"
-                sx={{ color: "#0000008a" }}
+                sx={{ color: gray.dark }}
+              />
+            </ListItemButton>
+          </ListItem>
+          <Divider />
+          <ListItem
+            secondaryAction={
+              <ListItemIcon sx={{ margin: 0, minWidth: "unset" }}>
+                <KeyboardReturnIcon />
+              </ListItemIcon>
+            }
+            sx={{ paddingRight: 0 }}
+            disablePadding
+          >
+            <ListItemButton>
+              <ListItemIcon>
+                <Avatar
+                  alt="Travis Howard"
+                  src="https://avatars.githubusercontent.com/u/69631?s=200&v=4"
+                />
+              </ListItemIcon>
+              <ListItemText
+                primary="https://github.com/facebook/react"
+                sx={{
+                  color: gray.dark,
+                }}
               />
             </ListItemButton>
           </ListItem>
