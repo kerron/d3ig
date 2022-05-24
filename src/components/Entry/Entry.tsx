@@ -44,6 +44,9 @@ const Entry = () => {
         placeholder="example: https://github.com/kerron/d3ig"
         sx={{
           backgroundColor: "white",
+          input: {
+            color: "#0000008a",
+          },
         }}
         inputProps={{
           maxLength: 250,
@@ -61,7 +64,7 @@ const Entry = () => {
                     cursor: "pointer",
                   }}
                 >
-                  <KeyboardReturnIcon />
+                  <KeyboardReturnIcon sx={{ color: "#0000008a" }} />
                 </Paper>
               ) : null}
             </InputAdornment>
@@ -73,15 +76,18 @@ const Entry = () => {
         <List>
           <ListItem
             secondaryAction={
-              <ListItemIcon>
+              <ListItemIcon sx={{ margin: 0, minWidth: "unset" }}>
                 <KeyboardReturnIcon />
               </ListItemIcon>
             }
             sx={{ paddingRight: 0 }}
             disablePadding
           >
-            <ListItemButton sx={{ paddingRight: 0 }}>
-              <ListItemText primary="https://github.com/kerron/d3ig" />
+            <ListItemButton>
+              <ListItemText
+                primary="https://github.com/kerron/d3ig"
+                sx={{ color: "#0000008a" }}
+              />
             </ListItemButton>
           </ListItem>
         </List>
