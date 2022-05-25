@@ -18,6 +18,32 @@ import Logo from "../../assets/logo.svg";
 import { Box } from "@mui/system";
 import { useStore } from "../../hooks/useStore";
 import { observer } from "mobx-react-lite";
+import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
+import { getErrorMessage } from "../../utils/utils";
+import {
+  DEFAULT_ERROR_MESSAGE,
+  INVALID_URL_STR,
+} from "../../constants/constants";
+import { styled } from "@mui/material/styles";
+
+const TooltipStyled = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "#ffffff",
+    color: theme.palette.error.dark,
+    fontSize: theme.typography.pxToRem(16),
+    border: "1px solid #dadde9",
+    padding: 16,
+  },
+  [`& .${tooltipClasses.arrow}`]: {
+    color: "#ffffff",
+    "&:before": {
+      border: "1px solid #dadde9",
+    },
+  },
+}));
+
 // const blue = "#1f74cf";
 const gray = { dark: "#0000008a", light: "#f9f7f7" };
 
@@ -26,6 +52,7 @@ const MainSearch: React.FC = observer(() => {
     octokitStore: { getRepo },
   } = useStore();
 
+  const [errorMsg, setErrorMsg] = useState("");
   const [value, setValue] = useState("");
 
   const onChange = (
@@ -33,7 +60,6 @@ const MainSearch: React.FC = observer(() => {
   ) => {
     if (!e) return;
     setValue(e.target.value);
-    console.log(e.target.value);
   };
   const onSubmit = (
     e:
@@ -41,22 +67,34 @@ const MainSearch: React.FC = observer(() => {
       | React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    // TODO: throw error
-    if (!value) return;
+    if (!value) {
+      setErrorMsg(DEFAULT_ERROR_MESSAGE);
+      return;
+    }
+
     makeQuery(value);
   };
 
   const makeQuery = async (query: string) => {
-    const { hostname, pathname } = new URL(query);
-
-    // TODO: throw error
-    if (hostname !== "github.com") return;
-
     try {
+      const { hostname, pathname } = new URL(query);
+
+      if (hostname !== "github.com") {
+        setErrorMsg(DEFAULT_ERROR_MESSAGE);
+        return;
+      }
+
       const [, owner, name] = pathname.split("/");
+
       await getRepo({ owner, name });
-    } catch (error) {
-      console.log({ error });
+    } catch (error: unknown) {
+      const msg = getErrorMessage({ error });
+      if (msg === INVALID_URL_STR) {
+        setErrorMsg(DEFAULT_ERROR_MESSAGE);
+        return;
+      }
+
+      setErrorMsg(msg);
     }
   };
 
@@ -72,43 +110,51 @@ const MainSearch: React.FC = observer(() => {
         <img src={Logo} alt="logo" width={180} />
       </Box>
       <form onSubmit={onSubmit}>
-        <TextField
-          id="outlined-basic"
-          label="Enter a public Github repository"
-          variant="outlined"
-          value={value}
-          onChange={(e) => onChange(e)}
-          placeholder="example: https://github.com/facebook/react"
-          sx={{
-            backgroundColor: "white",
-            input: {
-              color: gray.dark,
-            },
-          }}
-          inputProps={{
-            maxLength: 250,
-          }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end" variant="standard">
-                {value && (
-                  <Button
-                    onClick={onSubmit}
-                    sx={{
-                      bgcolor: gray.light,
-                      padding: 1,
-                      display: "flex",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <KeyboardReturnIcon sx={{ color: gray.dark }} />
-                  </Button>
-                )}
-              </InputAdornment>
-            ),
-          }}
-          fullWidth
-        />
+        <TooltipStyled
+          title={errorMsg}
+          open={!!errorMsg}
+          placement="top-start"
+          arrow
+        >
+          <TextField
+            onFocus={() => setErrorMsg("")}
+            id="outlined-basic"
+            label="Enter a public Github repository"
+            variant="outlined"
+            value={value}
+            onChange={(e) => onChange(e)}
+            placeholder="example: https://github.com/facebook/react"
+            sx={{
+              backgroundColor: "white",
+              input: {
+                color: gray.dark,
+              },
+            }}
+            inputProps={{
+              maxLength: 250,
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end" variant="standard">
+                  {value && (
+                    <Button
+                      onClick={onSubmit}
+                      sx={{
+                        bgcolor: gray.light,
+                        padding: 1,
+                        display: "flex",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <KeyboardReturnIcon sx={{ color: gray.dark }} />
+                    </Button>
+                  )}
+                </InputAdornment>
+              ),
+            }}
+            fullWidth
+          />
+        </TooltipStyled>
       </form>
       <Paper elevation={1} sx={{ bgcolor: gray.light }}>
         <List>

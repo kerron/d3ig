@@ -43,3 +43,6 @@ export const DEFAULT_USER_GRAPH_COLOR = [
   "rgb(53, 162, 235)",
   "rgba(53, 162, 235, 0.5)",
 ];
+
+export const INVALID_URL_STR = "Failed to construct 'URL': Invalid URL";
+export const DEFAULT_ERROR_MESSAGE = "Please enter a valid Github repository";
