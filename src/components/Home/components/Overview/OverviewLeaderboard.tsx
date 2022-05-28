@@ -9,7 +9,13 @@ const OverviewLeaderboard = () => {
   } = useStore();
 
   return (
-    <Grid spacing={2} alignItems="stretch" container>
+    <Grid
+      sx={{
+        justifyContent: "space-between",
+        marginBottom: 2,
+      }}
+      container
+    >
       <OverviewCard
         title={
           <ChartTitle
