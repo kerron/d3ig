@@ -39,7 +39,7 @@ const OverviewMember = () => {
   const {
     octokitStore: {
       currentUsername,
-      currentUser: { additions, lastContributed, loc, totalPrs },
+      currentUser: { lastContributed, loc, totalPrs },
       firstPRDate,
       totalPRs,
       totalLOC,
@@ -52,7 +52,13 @@ const OverviewMember = () => {
   ).toFixed(1);
   const percentagePRs = ((totalPrs / totalPRs) * 100).toFixed(1);
   return (
-    <Grid spacing={2} alignItems="stretch" container>
+    <Grid
+      sx={{
+        justifyContent: "space-between",
+        marginBottom: 2,
+      }}
+      container
+    >
       <OverviewCard
         title={
           <ChartTitle

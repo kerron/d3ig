@@ -55,9 +55,7 @@ const Leaderboard = observer(() => {
 
   return (
     <>
-      <Grid mb={3} container>
-        <OverviewLeaderboard />
-      </Grid>
+      <OverviewLeaderboard />
       <Grid justifyContent="space-between" spacing={2} container>
         <Grid item xs={12} sm={12}>
           {!!labels.length && (

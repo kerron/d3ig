@@ -11,7 +11,7 @@ import MainCard from "../Home/components/MainCard/MainCard";
 import OverviewMember from "../Home/components/Overview/OverviewMember";
 import Spinner from "../Spinner/Spinner";
 
-const Member = observer(() => {
+const Member: React.FC = observer(() => {
   const [prepLabels, setPrepLabels] = useState<string[]>([]);
   const [prepData, setPrepData] = useState<number[]>([]);
 
@@ -34,6 +34,7 @@ const Member = observer(() => {
   }, [username, setCurrentUser]);
 
   useEffect(() => {
+    console.log({ currentUser });
     if (!currentUser || !data) return;
     const l = labels
       .filter((v, i, a) => a.indexOf(v) === i)

@@ -35,6 +35,7 @@ const AppBar = styled(MuiAppBar, {
 const Header = observer(() => {
   const {
     uiStore: { getDrawerState, setDrawerState },
+    octokitStore: { repoName },
   } = useStore();
 
   return (
@@ -68,17 +69,22 @@ const Header = observer(() => {
             alignItems: "center",
           }}
         >
-          <Typography
-            variant="h2"
-            noWrap
-            sx={{
-              fontWeight: 600,
-              fontSize: 24,
-              color: "#2a2e3a",
-            }}
+          <a
+            href={`https://github.com/${repoName}`}
+            style={{ textDecoration: "none" }}
           >
-            Digital Claims Integrated App
-          </Typography>
+            <Typography
+              variant="h2"
+              noWrap
+              sx={{
+                fontWeight: 600,
+                fontSize: 24,
+                color: "#2a2e3a",
+              }}
+            >
+              {repoName}
+            </Typography>
+          </a>
           <Contributors />
         </Box>
       </Toolbar>

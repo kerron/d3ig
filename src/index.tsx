@@ -17,7 +17,6 @@ import {
   Legend,
 } from "chart.js";
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { BrowserRouter } from "react-router-dom";
 
@@ -45,9 +44,7 @@ const firebaseConfig = {
   measurementId: "G-1FF7YY6RPF",
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+initializeApp(firebaseConfig);
 
 const theme = createTheme();
 

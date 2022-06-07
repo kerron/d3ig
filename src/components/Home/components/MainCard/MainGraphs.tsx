@@ -12,9 +12,7 @@ const MainGraphs = () => {
   } = useStore();
   return (
     <>
-      <Grid mb={3} container>
-        <Overview />
-      </Grid>
+      <Overview />
       <Grid justifyContent="space-between" spacing={2} container>
         <Grid item xs={12} sm={12}>
           <MainCard

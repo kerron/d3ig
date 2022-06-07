@@ -1,4 +1,4 @@
-import { Grid, Paper, Typography } from "@mui/material";
+import { Paper, Typography } from "@mui/material";
 import React from "react";
 
 interface IOverviewCard {
@@ -9,19 +9,26 @@ interface IOverviewCard {
 
 const OverviewCard: React.FC<IOverviewCard> = ({ title, body, caption }) => {
   return (
-    <Grid flex={1} item>
-      <Paper sx={{ padding: 1 }}>
-        <Typography variant="h6" sx={{ fontSize: 16 }}>
-          {title}
-        </Typography>
-        <Typography sx={{ fontSize: 24, fontWeight: 600, paddingY: 1 }}>
-          {body}
-        </Typography>
-        <Typography variant="caption" color="GrayText">
-          {caption}
-        </Typography>
-      </Paper>
-    </Grid>
+    <Paper
+      sx={{
+        flex: 1,
+        padding: 1,
+        display: "flex",
+        alignItems: "stretch",
+        flexDirection: "column",
+        marginRight: 1,
+      }}
+    >
+      <Typography variant="h6" sx={{ fontSize: 16 }}>
+        {title}
+      </Typography>
+      <Typography sx={{ fontSize: 24, fontWeight: 600, paddingY: 1 }}>
+        {body}
+      </Typography>
+      <Typography variant="caption" color="GrayText">
+        {caption}
+      </Typography>
+    </Paper>
   );
 };
 
