@@ -1,10 +1,11 @@
 import { Grid } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { DATE_FORMAT_DAY } from "../../constants/constants";
 import { useStore } from "../../hooks/useStore";
+import { TUserModel } from "../../utils/types";
 import ChartTitle from "../ChartTitle/ChartTitle";
 import MemberPRs from "../Graphs/MemberPRs";
 import MainCard from "../Home/components/MainCard/MainCard";
@@ -14,18 +15,29 @@ import Spinner from "../Spinner/Spinner";
 const Member: React.FC = observer(() => {
   const [prepLabels, setPrepLabels] = useState<string[]>([]);
   const [prepData, setPrepData] = useState<number[]>([]);
+  const [predictedContributions, setPredictedContributions] =
+    useState<number>(0);
 
   const { username } = useParams();
 
   const {
     octokitStore: { currentUser, firstPRDate, setCurrentUser },
   } = useStore();
+
   const {
+    additions,
     contributionGraph: {
       labels,
       datasets: { data },
     },
-  } = currentUser;
+  } = currentUser as TUserModel;
+
+  const expectedOutputNextMonth = useCallback(() => {
+    const months = moment().diff(firstPRDate, "months");
+    const averagePrPerMonth =
+      Math.round((additions.length / months) * 100) / 100;
+    setPredictedContributions(averagePrPerMonth);
+  }, [additions, firstPRDate]);
 
   useEffect(() => {
     if (username) {
@@ -34,17 +46,18 @@ const Member: React.FC = observer(() => {
   }, [username, setCurrentUser]);
 
   useEffect(() => {
-    console.log({ currentUser });
     if (!currentUser || !data) return;
+
     const l = labels
       .filter((v, i, a) => a.indexOf(v) === i)
       .sort()
       .map((v) => moment(v).format(DATE_FORMAT_DAY));
-
     const d = Object.values(data) as number[];
+
+    expectedOutputNextMonth();
     setPrepLabels(l);
     setPrepData(d);
-  }, [firstPRDate, currentUser, data, labels]);
+  }, [expectedOutputNextMonth, firstPRDate, currentUser, data, labels]);
 
   if (!currentUser || !data) return <Spinner />;
 
@@ -52,6 +65,7 @@ const Member: React.FC = observer(() => {
     <>
       <Grid mb={3} container>
         <OverviewMember />
+        {predictedContributions}
       </Grid>
       <Grid justifyContent="space-between" spacing={2} container mb={3}>
         <Grid item xs={12} sm={12}>

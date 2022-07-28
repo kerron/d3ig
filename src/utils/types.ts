@@ -57,3 +57,16 @@ export type TContributionsByContributor = {
 };
 
 export type TContributionsOnDate = { [key: string]: number[] };
+
+export type TUserModel = {
+  additions: number[];
+  contributionGraph: TContributionGraph;
+  lastContributions: string;
+  loc: number;
+  totalPRs: number;
+};
+
+type TContributionGraph = {
+  labels: string[];
+  datasets: { data: Record<string, unknown> };
+};
