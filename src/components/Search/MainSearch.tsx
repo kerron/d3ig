@@ -85,7 +85,7 @@ const MainSearch: React.FC = observer(() => {
       }
 
       const [, owner, name] = pathname.split("/");
-
+      console.log({ owner, name });
       await getRepo({ owner, name });
     } catch (error: unknown) {
       const msg = getErrorMessage({ error });
@@ -158,6 +158,35 @@ const MainSearch: React.FC = observer(() => {
       </form>
       <Paper elevation={1} sx={{ bgcolor: gray.light }}>
         <List>
+          <ListItem
+            onClick={() =>
+              makeQuery(
+                "https://github.com/esure-cloud/fe-react-app-integrated-eclaim"
+              )
+            }
+            secondaryAction={
+              <ListItemIcon sx={{ margin: 0, minWidth: "unset" }}>
+                <KeyboardReturnIcon />
+              </ListItemIcon>
+            }
+            sx={{ paddingRight: 0 }}
+            disablePadding
+          >
+            <ListItemButton>
+              <ListItemIcon>
+                <Avatar
+                  alt="esure"
+                  src="https://avatars.githubusercontent.com/u/71490276?s=200&v=4"
+                />
+              </ListItemIcon>
+              <ListItemText
+                primary="https://github.com/esure-cloud/fe-react-app-integrated-eclaim"
+                sx={{
+                  color: gray.dark,
+                }}
+              />
+            </ListItemButton>
+          </ListItem>
           <ListItem
             onClick={() => makeQuery("https://github.com/facebook/react")}
             secondaryAction={

@@ -25,3 +25,14 @@ $ npm run
 ```
 
 Create a ticket if you find an issue.
+
+## TODO
+
+expected output
+
+- based on previous month's output
+- show for the next month
+- then I can have project vs actual
+
+most frequent days
+most frequent time
