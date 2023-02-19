@@ -65,7 +65,7 @@ const Member: React.FC = observer(() => {
     <>
       <Grid mb={3} container>
         <OverviewMember />
-        {predictedContributions}
+        {/* {predictedContributions} */}
       </Grid>
       <Grid justifyContent="space-between" spacing={2} container mb={3}>
         <Grid item xs={12} sm={12}>

@@ -160,9 +160,7 @@ const MainSearch: React.FC = observer(() => {
         <List>
           <ListItem
             onClick={() =>
-              makeQuery(
-                "https://github.com/esure-cloud/fe-react-app-integrated-eclaim"
-              )
+              makeQuery("https://github.com/jesseduffield/lazygit")
             }
             secondaryAction={
               <ListItemIcon sx={{ margin: 0, minWidth: "unset" }}>
@@ -175,37 +173,12 @@ const MainSearch: React.FC = observer(() => {
             <ListItemButton>
               <ListItemIcon>
                 <Avatar
-                  alt="esure"
-                  src="https://avatars.githubusercontent.com/u/71490276?s=200&v=4"
+                  alt="lazygit"
+                  src="https://user-images.githubusercontent.com/8456633/174470852-339b5011-5800-4bb9-a628-ff230aa8cd4e.png"
                 />
               </ListItemIcon>
               <ListItemText
-                primary="https://github.com/esure-cloud/fe-react-app-integrated-eclaim"
-                sx={{
-                  color: gray.dark,
-                }}
-              />
-            </ListItemButton>
-          </ListItem>
-          <ListItem
-            onClick={() => makeQuery("https://github.com/facebook/react")}
-            secondaryAction={
-              <ListItemIcon sx={{ margin: 0, minWidth: "unset" }}>
-                <KeyboardReturnIcon />
-              </ListItemIcon>
-            }
-            sx={{ paddingRight: 0 }}
-            disablePadding
-          >
-            <ListItemButton>
-              <ListItemIcon>
-                <Avatar
-                  alt="react"
-                  src="https://avatars.githubusercontent.com/u/69631?s=200&v=4"
-                />
-              </ListItemIcon>
-              <ListItemText
-                primary="https://github.com/facebook/react"
+                primary="https://github.com/jesseduffield/lazygit"
                 sx={{
                   color: gray.dark,
                 }}
@@ -214,7 +187,9 @@ const MainSearch: React.FC = observer(() => {
           </ListItem>
           <Divider />
           <ListItem
-            onClick={() => makeQuery("https://github.com/vuejs/vue")}
+            onClick={() =>
+              makeQuery("https://github.com/charmbracelet/bubbletea")
+            }
             secondaryAction={
               <ListItemIcon sx={{ margin: 0, minWidth: "unset" }}>
                 <KeyboardReturnIcon />
@@ -227,11 +202,11 @@ const MainSearch: React.FC = observer(() => {
               <ListItemIcon>
                 <Avatar
                   alt="vue"
-                  src="https://avatars.githubusercontent.com/u/6128107?s=200&v=4"
+                  src="https://camo.githubusercontent.com/43927db9533c5fde08c71679f256f0d37bc6bb4e1f2d13aa11ad9fe8203d602b/68747470733a2f2f73747566662e636861726d2e73682f627562626c657465612f627562626c657465612d6769746875622d6865616465722d73696d706c652e706e67"
                 />
               </ListItemIcon>
               <ListItemText
-                primary="https://github.com/vuejs/vue"
+                primary="https://github.com/charmbracelet/bubbletea"
                 sx={{ color: gray.dark }}
               />
             </ListItemButton>
